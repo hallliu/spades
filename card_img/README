@@ -1,0 +1,4 @@
+Place card images in this directory, under <suit>/<card>.png
+i.e. hearts/two.png, spades/jack.png, diamonds/ace.png
+
+Place card backs in backs/, with names such as back1.png, back5.png, backe.png, etc.

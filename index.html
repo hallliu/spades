@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spades</title>
+        <link rel="stylesheet" type="text/css" href="styles/card_styles.css">
+        <link rel="stylesheet" type="text/css" href="styles/board_styles.css">
+    </head>
+    <body>
+        <div id="main-container"></div>
+        <button onClick="sample_card.flip()">Flip</button>
+        <button onClick="sample_card.slide_down()">Down</button>
+        <button onClick="sample_card.slide_up()">Up</button>
+        <script data-main="scripts/load.js" src="scripts/lib/require.js"></script>
+
+        <script type="text/template" id="card_template">
+<div class="card-container">
+    <div class="card">
+        <img src="card_img/<%= suit %>/<%= card %>.png" alt="<%= card %> of <%= suit %>" class="front">
+        <img src="card_img/backs/back<%= back %>.png" alt="CARD BACK" class="back">
+    </div>
+</div>
+        </script>
+    </body>
+</html>

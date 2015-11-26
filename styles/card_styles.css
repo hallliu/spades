@@ -1,0 +1,24 @@
+.card-container {
+    /* hardcoded dimensions for the cards... fuck html */
+    width: 90px;
+    height: 135px; 
+    position: relative;
+    perspective: 2000px;
+}
+
+.card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+
+.card img {
+    backface-visibility: hidden;
+    position: absolute;
+    margin: 0;
+}
+
+.card img.back {
+    transform: rotateY(180deg);
+}
