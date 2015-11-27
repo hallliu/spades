@@ -10,6 +10,9 @@ require.config({
         "velocity": {
             deps: ["jquery"],
         },
+        "underscore": {
+            exports: ["_"],
+        },
     },
 });
 
