@@ -4,3 +4,9 @@
     position: relative;
     background-color: #b00b1e;
 }
+
+.deck {
+    border-radius: 13px;
+    border: 2px solid #F0EAD6;
+    height: 130px;
+}
