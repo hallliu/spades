@@ -1,5 +1,5 @@
 "use strict";
-define(["velocity", "underscore", "./Constants"], function(Velocity, _, Constants) {
+define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocity, _, Constants, PlayArea) {
     const BACK_ID = "3";
 
     var Card = function() {
@@ -27,33 +27,34 @@ define(["velocity", "underscore", "./Constants"], function(Velocity, _, Constant
             this.flipped = !this.flipped;
         };
 
-        Card.prototype.on_added = function(active) {
+        Card.prototype.on_added = function(deck, active) {
+            this.deck = deck;
             if (active) {
                 this.el.mouseenter(_.bind(function() {
-                    this.el.velocity("stop");
+                    this.el.velocity("finish");
                     this.el.velocity({"top": this.el.data("orig-top") - 20},
                             {duration: Constants.CARD_PEEK_SPEED});
                 }, this)).mouseleave(_.bind(function() {
-                    this.el.velocity("stop");
+                    this.el.velocity("finish");
                     this.el.velocity({"top": this.el.data("orig-top")},
                             {duration: Constants.CARD_PEEK_SPEED});
                 }, this));
                 this.el.click(_.bind(function() {
-                    this.reparent();
+                    this.put_in_play();
                 }, this));
             }
         };
 
         Card.prototype.on_removed = function() {
-            this.el.velocity("stop");
+            this.el.velocity("finish");
             this.el.off("mouseenter").off("mouseleave");
+            this.reparent();
         };
 
         /**
          * Re-parents the card to be a child of the game board.
          */
         Card.prototype.reparent = function() {
-            this.on_removed();
             var old_offset = this.el.offset();
             var deck_transform = this.el.parent().css("transform");
 
@@ -61,6 +62,23 @@ define(["velocity", "underscore", "./Constants"], function(Velocity, _, Constant
             this.el.appendTo("#main-container");
             this.el.css("transform", deck_transform);
             this.el.offset(old_offset);
+        };
+
+        Card.prototype.put_in_play = function() {
+            this.deck.remove_card(this.cid);
+            this.on_removed();
+            var new_position = PlayArea.obtain().get_position_of_container(this.deck.board_position);
+            var p1 = Velocity.animate(this.el, {
+                top: new_position.top,
+                left: new_position.left,
+                transform: "rotate(0deg)",
+            }, {duration: Constants.CARD_PLAY_SPEED});
+            var p2 = Velocity.animate(this.el, {
+                "rotateY": "0deg",
+            }, {duration: Constants.CARD_PLAY_SPEED});
+            Promise.all([p1, p2]).then(_.bind(function() {
+                PlayArea.obtain().add_to_container(this, this.deck.board_position);
+            }, this));
         };
 
         return Card;
@@ -169,7 +187,7 @@ define(["velocity", "underscore", "./Constants"], function(Velocity, _, Constant
             this.rotate(calculated_position.rotation);
 
             this.cards.forEach(function(card, idx) {
-                card.on_added(this.is_active);
+                card.on_added(this, this.is_active);
             }, this);
             this._render();
         };
@@ -179,7 +197,7 @@ define(["velocity", "underscore", "./Constants"], function(Velocity, _, Constant
             this.cards.sort(card_sort_cmp);
             var new_card_idx = _.indexOf(this.cards, card);
 
-            card.on_added(this.is_active);
+            card.on_added(this, this.is_active);
             card.el.appendTo(this.el);
             this._update_card(new_card_idx, false);
             this._update();
@@ -194,8 +212,6 @@ define(["velocity", "underscore", "./Constants"], function(Velocity, _, Constant
             }
             var removed_card = this.cards[removed_card_idx];
             this.cards = _.reject(this.cards, function(card) {return card.cid === card_id});
-            removed_card.on_removed();
-            removed_card.el.detach();
             this._update();
         };
 

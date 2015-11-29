@@ -1,11 +1,58 @@
 #main-container {
     width: 1000px;
-    height: 700px;
+    height: 750px;
     position: relative;
-    background-color: #b00b1e;
+    background-color: #45a5ae;
 }
 
 .deck {
-    border-radius: 13px;
+    border-radius: 15px;
     border: 2px solid #F0EAD6;
+}
+
+#play-area {
+    position: absolute;
+    width: 282px;
+    height: 402px;
+}
+
+.single-card-container {
+    width: 90px;
+    height: 134px;
+    border-radius: 15px;
+    border: 2px solid #F0EAD6;
+    position: absolute;
+}
+
+#top-played-card {
+    left: 94px;
+    top: 0px;
+}
+
+#left-played-card {
+    left: 0px;
+    top: 134px;
+}
+
+#right-played-card {
+    left: 188px;
+    top: 134px;
+}
+
+#bottom-played-card {
+    left: 94px;
+    top: 268px;
+}
+
+#active-suit {
+    position: absolute;
+    border-radius: 10px;
+    border: 2px solid #F0EAD6;
+    width: 68px;
+    height: 68px;
+    left: 107px;
+    top: 167px;
+
+    font-size: 4em;
+    text-align: center;
 }

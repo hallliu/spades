@@ -6,10 +6,20 @@
         <link rel="stylesheet" type="text/css" href="styles/board_styles.css">
     </head>
     <body>
-        <div id="main-container"></div>
-        <button onClick="sample_card.flip()">Flip</button>
-        <button onClick="sample_card.slide_down()">Down</button>
-        <button onClick="sample_card.slide_up()">Up</button>
+        <div id="main-container">
+            <div id="play-area">
+                <div class="single-card-container" id="top-played-card"></div>
+                <div class="single-card-container" id="left-played-card"></div>
+                <div class="single-card-container" id="right-played-card"></div>
+                <div class="single-card-container" id="bottom-played-card"></div>
+                <div id="active-suit" class=suit-indicator"></div>
+            </div>
+        </div>
+        <div style="color:red" id="heart-suit">&hearts;</div>
+        <div style="color:red" id="diam-suit">&diams;</div>
+        <div style="color:black" id="spade-suit">&spades;</div>
+        <div style="color:black" id="club-suit">&clubs;</div>
+
         <script data-main="scripts/load.js" src="scripts/lib/require.js"></script>
 
         <script type="text/template" id="card_template">
@@ -20,9 +30,12 @@
     </div>
 </div>
         </script>
+
         <script type="text/template" id="deck_template">
 <div class="deck" style="transform-style: preserve-3d">
 </div>
         </script>
+
+        
     </body>
 </html>

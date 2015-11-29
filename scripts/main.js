@@ -1,6 +1,7 @@
 "use strict";
 
-define(["./CardUI", "velocity", "underscore"], function(CardUI, Velocity, _) {
+define(["./CardUI", "./PlayArea", "velocity", "underscore"],
+        function(CardUI, PlayArea, Velocity, _) {
     var all_cards = _.range(52);
     all_cards = _.shuffle(all_cards);
     var positions = ["bottom", "top", "left", "right"];
@@ -10,6 +11,9 @@ define(["./CardUI", "velocity", "underscore"], function(CardUI, Velocity, _) {
         });
         return new CardUI.Deck(card_coll, positions[i], true);
     });
+
+    var play_area = PlayArea.obtain();
+    play_area.set_suit("hearts");
 
     decks.forEach(function(d) {d.attach()});
     window.decks = decks;
