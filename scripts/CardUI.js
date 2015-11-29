@@ -27,8 +27,8 @@ define(["velocity", "underscore", "./Constants"], function(Velocity, _, Constant
             this.flipped = !this.flipped;
         };
 
-        Card.prototype.on_added = function(do_mouseover) {
-            if (do_mouseover) {
+        Card.prototype.on_added = function(active) {
+            if (active) {
                 this.el.mouseenter(_.bind(function() {
                     this.el.velocity("stop");
                     this.el.velocity({"top": this.el.data("orig-top") - 20},
@@ -38,10 +38,14 @@ define(["velocity", "underscore", "./Constants"], function(Velocity, _, Constant
                     this.el.velocity({"top": this.el.data("orig-top")},
                             {duration: Constants.CARD_PEEK_SPEED});
                 }, this));
+                this.el.click(_.bind(function() {
+                    this.reparent();
+                }, this));
             }
         };
 
         Card.prototype.on_removed = function() {
+            this.el.velocity("stop");
             this.el.off("mouseenter").off("mouseleave");
         };
 
@@ -49,14 +53,14 @@ define(["velocity", "underscore", "./Constants"], function(Velocity, _, Constant
          * Re-parents the card to be a child of the game board.
          */
         Card.prototype.reparent = function() {
-            var own_position = this.el.position();
-            var deck_position = this.el.parent().position();
+            this.on_removed();
+            var old_offset = this.el.offset();
+            var deck_transform = this.el.parent().css("transform");
 
             this.el.detach();
-            this.on_removed();
             this.el.appendTo("#main-container");
-            this.el.css("top", own_position.top + deck_position.top);
-            this.el.css("left", own_position.left + deck_position.left);
+            this.el.css("transform", deck_transform);
+            this.el.offset(old_offset);
         };
 
         return Card;
