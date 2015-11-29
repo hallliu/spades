@@ -1,6 +1,6 @@
 #main-container {
-    width: 600px;
-    height: 600px;
+    width: 1000px;
+    height: 700px;
     position: relative;
     background-color: #b00b1e;
 }
@@ -8,5 +8,4 @@
 .deck {
     border-radius: 13px;
     border: 2px solid #F0EAD6;
-    height: 130px;
 }

@@ -1,12 +1,16 @@
 "use strict";
 
 define(["./CardUI", "velocity", "underscore"], function(CardUI, Velocity, _) {
-    var sample_card = new CardUI.Card(15);
-    var card_coll = _.map([14, 18, 34, 11, 26], function(cid) {return new CardUI.Card(cid);});
-    var deck = new CardUI.Deck(card_coll);
-    deck.attach();
+    var all_cards = _.range(52);
+    all_cards = _.shuffle(all_cards);
+    var positions = ["bottom", "top", "left", "right"];
+    var decks = _.map(_.range(4), function(i) {
+        var card_coll = _.map(_.range(i*13, (i+1)*13), function(j) {
+            return new CardUI.Card(all_cards[j]);
+        });
+        return new CardUI.Deck(card_coll, positions[i], true);
+    });
 
-    window.deck = deck;
-    window.card_coll = card_coll;
-    window.sample_card = sample_card;
+    decks.forEach(function(d) {d.attach()});
+    window.decks = decks;
 });

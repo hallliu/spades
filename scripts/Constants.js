@@ -8,4 +8,5 @@ define({
     SUIT_NAMES: ["spades", "hearts", "clubs", "diamonds"],
     CARD_PEEK_SPEED: 200,
     DECK_BORDER_THICKNESS: 2,
+    DECK_DIST_FROM_BOARD_EDGE: 10,
 });
