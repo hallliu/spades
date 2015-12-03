@@ -46,7 +46,7 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
         };
 
         Card.prototype.on_removed = function() {
-            this.el.velocity("finish");
+            this.el.velocity("finish", true);
             this.el.off("mouseenter").off("mouseleave");
             this.reparent();
         };
@@ -68,16 +68,26 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
             this.deck.remove_card(this.cid);
             this.on_removed();
             var new_position = PlayArea.obtain().get_position_of_container(this.deck.board_position);
+            var position = this.el.position();
             var p1 = Velocity.animate(this.el, {
-                top: new_position.top,
-                left: new_position.left,
+                top: [new_position.top, position.top],
+                left: [new_position.left, position.left],
                 transform: "rotate(0deg)",
+                rotateY: "0deg"
             }, {duration: Constants.CARD_PLAY_SPEED});
-            var p2 = Velocity.animate(this.el, {
-                "rotateY": "0deg",
-            }, {duration: Constants.CARD_PLAY_SPEED});
-            Promise.all([p1, p2]).then(_.bind(function() {
+
+            p1.then(_.bind(function() {
                 PlayArea.obtain().add_to_container(this, this.deck.board_position);
+            }, this));
+        };
+
+        Card.prototype.remove_from_play = function(dest_position) {
+            Velocity.animate(this.el, {
+                top: dest_position.top,
+                left: dest_position.left,
+                opacity: 0,
+            }, { display: "none" }).then(_.bind(function() {
+                this.el.detach();
             }, this));
         };
 

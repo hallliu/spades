@@ -3,6 +3,36 @@
 define(["underscore", "./Constants"], function(_, Constants) {
     var obtain = function() {
         var play_area_singleton;
+
+        var calculate_new_loc = function(new_pos) {
+            var vert_center_top = $("#main-container").height() / 2
+                - Constants.CARD_HEIGHT / 2;
+            var horiz_center_left = $("#main-container").width() / 2
+                - Constants.CARD_WIDTH / 2;
+            switch (new_pos) {
+                case 'top':
+                    return {
+                        top: -Constants.CARD_HEIGHT,
+                        left: horiz_center_left,
+                    };
+                case 'bottom':
+                    return {
+                        top: $("#main-container").height(),
+                        left: horiz_center_left,
+                    };
+                case 'left':
+                    return {
+                        top: vert_center_top,
+                        left: -Constants.CARD_WIDTH,
+                    };
+                case 'right':
+                    return {
+                        top: vert_center_top,
+                        left: $("#main-container").width(),
+                    };
+            }
+        };
+
         /**
          * @constructor
          */
@@ -49,10 +79,28 @@ define(["underscore", "./Constants"], function(_, Constants) {
         };
         
         PlayArea.prototype.add_to_container = function(card, container_position) {
+            /* Is this really necessary?
             var old_offset = card.el.offset();
             card.el.appendTo($("#" + container_position + "-played-card"));
             card.el.offset(old_offset);
+            */
             this.cards[container_position] = card;
+        };
+
+        /**
+         * Clears the play area by sweeping cards away.
+         * @param direction: one of 'top', 'bottom', 'left', or 'right'
+         */
+        PlayArea.prototype.clear = function(direction) {
+            var dest_position = calculate_new_loc(direction);
+            ['bottom', 'top', 'left', 'right'].forEach(function(card_loc) {
+                if (this.cards[card_loc] === undefined) {
+                    return;
+                }
+                var card = this.cards[card_loc];
+                this.cards[card_loc] = undefined;
+                card.remove_from_play(dest_position);
+            }, this);
         };
 
         var obtain = function() {

@@ -17,4 +17,5 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore"],
 
     decks.forEach(function(d) {d.attach()});
     window.decks = decks;
+    window.play_area = play_area;
 });
