@@ -1,12 +1,12 @@
 #main-container {
     width: 1000px;
     height: 750px;
-    position: relative;
     background-color: #45a5ae;
+    float: left;
 }
 
 .deck {
-    border-radius: 15px;
+    border-radius: 6px;
     border: 2px solid #F0EAD6;
 }
 

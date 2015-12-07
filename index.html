@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 <html>
     <head>
         <title>Spades</title>
         <link rel="stylesheet" type="text/css" href="styles/card_styles.css">
         <link rel="stylesheet" type="text/css" href="styles/board_styles.css">
+        <link rel="stylesheet" type="text/css" href="styles/scoring_styles.css">
     </head>
     <body>
         <div id="main-container">
@@ -15,10 +16,27 @@
                 <div id="active-suit" class=suit-indicator"></div>
             </div>
         </div>
-        <div style="color:red" id="heart-suit">&hearts;</div>
-        <div style="color:red" id="diam-suit">&diams;</div>
-        <div style="color:black" id="spade-suit">&spades;</div>
-        <div style="color:black" id="club-suit">&clubs;</div>
+
+        <div id="scoring-area">
+            <div class="team-area" id="team-left">
+                <table>
+                    <thead>
+                        <tr><th colspan=3>Team 1</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>60</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="team-area" id="team-right">
+            </div>
+        </div>
+        <button onClick="play_area.clear('top');">Clear to top</button>
 
         <script data-main="scripts/load.js" src="scripts/lib/require.js"></script>
 
