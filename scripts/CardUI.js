@@ -102,19 +102,6 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
         // Helper function to calculate where a card should be.
         // Returns an object with top and left
         var calc_card_pos = function(deck_el, idx, num_cards) {
-            /* *** This is for when card's parent is the game board ***
-
-            var deck_top_pos = deck_el.position().top;
-            var deck_left_pos = deck_el.position().left;
-            
-            var total_card_width = (num_cards - 1) * Constants.CARD_OFFSET + Constants.CARD_WIDTH;
-            var left_offset_of_card_0 = (deck_el.width() - total_card_width) / 2;
-            return {
-                top: deck_top_pos + Constants.DECK_BORDER_THICKNESS,
-                left: deck_left_pos + left_offset_of_card_0 + idx * Constants.CARD_OFFSET,
-            }; */
-            
-            /* *** This is for when the card's parent is the deck.el *** */
             var total_card_width = (num_cards - 1) * Constants.CARD_OFFSET + Constants.CARD_WIDTH;
             var left_offset_of_card_0 = (deck_el.width() - total_card_width) / 2;
 
@@ -127,38 +114,37 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
         var calc_deck_pos = function(deck_el, rotation) {
             var parent_height = deck_el.parent().height();
             var parent_width = deck_el.parent().width();
-            var parent_pos = deck_el.parent().position();
 
             var wh_diff = deck_el.width() / 2 - deck_el.height() / 2;
 
-            var centered_left = (parent_width - deck_el.width()) / 2;
-            var centered_top = (parent_height - deck_el.width()) / 2;
+            var centered_left = (parent_width - deck_el.width()) / 2 - Constants.DECK_BORDER_THICKNESS;
+            var centered_top = (parent_height - deck_el.width()) / 2 - Constants.DECK_BORDER_THICKNESS;
 
             switch (rotation) {
                 case "bottom":
                     return {
-                        top: parent_height - deck_el.height()
+                        top: parent_height - deck_el.height() - Constants.DECK_BORDER_THICKNESS * 2
                                 - Constants.DECK_DIST_FROM_BOARD_EDGE,
                         left: centered_left,
                         rotation: 0,
                     };
                 case "top":
                     return {
-                        top: Constants.DECK_DIST_FROM_BOARD_EDGE,
+                        top: Constants.DECK_DIST_FROM_BOARD_EDGE + Constants.DECK_BORDER_THICKNESS,
                         left: centered_left,
                         rotation: 180,
                     };
                 case "left":
                     return {
                         top: centered_top + wh_diff,
-                        left: Constants.DECK_DIST_FROM_BOARD_EDGE - wh_diff,
+                        left: Constants.DECK_DIST_FROM_BOARD_EDGE - wh_diff + Constants.DECK_BORDER_THICKNESS,
                         rotation: 90,
                     };
                 case "right":
                     return {
                         top: centered_top + wh_diff,
                         left: parent_width - deck_el.height()
-                                - Constants.DECK_DIST_FROM_BOARD_EDGE - wh_diff,
+                                - Constants.DECK_DIST_FROM_BOARD_EDGE - wh_diff - Constants.DECK_BORDER_THICKNESS * 2,
                         rotation: 270,
                     };
                 default:
@@ -184,7 +170,7 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
             this.el = $($("#deck_template").html());
 
             this.el.width(Constants.CARD_OFFSET * 12 + Constants.CARD_WIDTH);
-            this.el.height(Constants.CARD_HEIGHT + 2 * Constants.DECK_BORDER_THICKNESS);
+            this.el.height(Constants.CARD_HEIGHT);
         };
 
         Deck.prototype.attach = function() {

@@ -1,7 +1,7 @@
 "use strict";
 
-define(["./CardUI", "./PlayArea", "velocity", "underscore"],
-        function(CardUI, PlayArea, Velocity, _) {
+define(["./CardUI", "./PlayArea", "velocity", "underscore", "./ScoringArea"],
+        function(CardUI, PlayArea, Velocity, _, ScoringArea) {
     var all_cards = _.range(52);
     all_cards = _.shuffle(all_cards);
     var positions = ["bottom", "top", "left", "right"];
@@ -14,6 +14,8 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore"],
 
     var play_area = PlayArea.obtain();
     play_area.set_suit("hearts");
+
+    var scoring_area = ScoringArea.obtain();
 
     decks.forEach(function(d) {d.attach()});
     window.decks = decks;

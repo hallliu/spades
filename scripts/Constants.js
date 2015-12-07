@@ -1,5 +1,5 @@
 define({
-    CARD_HEIGHT: 130,
+    CARD_HEIGHT: 135,
     CARD_WIDTH: 90,
     CARD_OFFSET: 20, // The offset when the cards are in the deck
     STARTING_Z: 0, // The z-index for the leftmost card in a deck

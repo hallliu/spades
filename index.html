@@ -21,13 +21,20 @@
             <div class="team-area" id="team-left">
                 <table>
                     <thead>
-                        <tr><th colspan=3>Team 1</th></tr>
+                        <tr><th colspan=4 class="team-name">Team 1</th></tr>
+                        <tr class="score-details">
+                            <th colspan=1>000 bid</th>
+                            <th colspan=1>asdfafe bid</th>
+                            <th colspan=1>Round score</th>
+                            <th colspan=1>Total score</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>3</td>
-                            <td>4</td>
-                            <td>60</td>
+                        <tr class="scoring-row">
+                            <td class="bid-1">2</td>
+                            <td class="bid-2">4</td>
+                            <td class="score">60</td>
+                            <td class="cum-score">60</td>
                         </tr>
                     </tbody>
                 </table>
@@ -54,6 +61,14 @@
 </div>
         </script>
 
-        
+        <script type="text/template" id="score_row_template">
+<tr class="scoring-row">
+    <td class="bid-1">x</td>
+    <td class="bid-2">4</td>
+    <td class="score">60</td>
+    <td class="cum-score">60</td>
+</tr>
+        </script>
+
     </body>
 </html>
