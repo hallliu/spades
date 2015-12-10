@@ -22,7 +22,7 @@ define(["./Constants", "underscore"], function(Constants, _) {
         ScoreModel.prototype.start_new_round = function() {
             var construct_new_row = function(curr_score) {
                 return {
-                    bids: {};
+                    bids: {},
                     round_score: null,
                     cumulative_score: curr_score,
                 };
@@ -45,6 +45,16 @@ define(["./Constants", "underscore"], function(Constants, _) {
             this.update_listeners(function() {l.on_bid_added(team_name, player_id);});
         };
 
+        ScoreModel.prototype.set_score = function(team_name, score) {
+            var team_score_rows = this.score_rows[team_name];
+            var current_score_row = team_score_rows[team_score_rows.length - 1];
+            var last_score_row = team_score_rows[team_score_rows.length - 2];
+            current_score_row.round_score = score;
+            current_score_row.cumulative_score = last_score_row.cumulative_score + score;
+
+            this.update_listeners(function() {l.on_scores_updated(team_name);});
+        };
+
         ScoreModel.prototype.update_listeners = function(listener_fn) {
             this.listeners.forEach(function(listener) {
                 listener_fn(listener);
@@ -54,25 +64,5 @@ define(["./Constants", "underscore"], function(Constants, _) {
         return ScoreModel;
     }();
 
-    var obtain = function () {
-        var scoring_area_singleton;
-        /**
-         * @constructor
-         */
-        var ScoringArea = function() {
-            this.el = $("#scoring-area");
-            this.score_template = _.template($("#score_row_template").html());
-            this.el.css("left",
-                    $("#main-container").position().left + $("#main-container").width());
-        };
-        
-       var obtain = function() {
-            scoring_area_singleton = scoring_area_singleton || new ScoringArea();
-            return scoring_area_singleton;
-        };
-        
-        return obtain;
-    }();
-
-    return {obtain: obtain};
+    return {ScoreModel: ScoreModel};
 });
