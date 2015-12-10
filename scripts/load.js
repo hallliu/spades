@@ -1,10 +1,9 @@
 require.config({
-    "baseUrl": "scripts/lib",
+    "baseUrl": "scripts/",
     paths: {
-        "jquery": "jquery.min",
-        "velocity": "velocity.min",
-        "underscore": "underscore",
-        "base": "../",
+        "jquery": "lib/jquery.min",
+        "velocity": "lib/velocity.min",
+        "underscore": "lib/underscore",
     },
     shim: {
         "velocity": {
@@ -16,4 +15,4 @@ require.config({
     },
 });
 
-require(["base/main"]);
+require(["main"]);
