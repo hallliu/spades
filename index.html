@@ -18,29 +18,36 @@
         </div>
 
         <div id="scoring-area">
-            <div class="team-area" id="team-left">
+            <div class="team-area" id="team-1-area">
                 <table>
                     <thead>
                         <tr><th colspan=4 class="team-name">Team 1</th></tr>
                         <tr class="score-details">
-                            <th colspan=1>000 bid</th>
-                            <th colspan=1>asdfafe bid</th>
+                            <th colspan=1><span class="player-1"></span> bid</th>
+                            <th colspan=1><span class="player-2"></span> bid</th>
                             <th colspan=1>Round score</th>
                             <th colspan=1>Total score</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="scoring-row">
-                            <td class="bid-1">2</td>
-                            <td class="bid-2">4</td>
-                            <td class="score">60</td>
-                            <td class="cum-score">60</td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="team-area" id="team-right">
+            <div class="team-area" id="team-2-area">
+                <table>
+                    <thead>
+                        <tr><th colspan=4 class="team-name">Team 1</th></tr>
+                        <tr class="score-details">
+                            <th colspan=1><span class="player-1"></span> bid</th>
+                            <th colspan=1><span class="player-2"></span> bid</th>
+                            <th colspan=1>Round score</th>
+                            <th colspan=1>Total score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         </div>
         <button onClick="play_area.clear('top');">Clear to top</button>
@@ -62,12 +69,10 @@
         </script>
 
         <script type="text/template" id="score_row_template">
-<tr class="scoring-row">
-    <td class="bid-1">x</td>
-    <td class="bid-2">4</td>
-    <td class="score">60</td>
-    <td class="cum-score">60</td>
-</tr>
+            <td class="bid-1"><%= bid_1 %></td>
+            <td class="bid-2"><%= bid_2 %></td>
+            <td class="score"><%= round_score %></td>
+            <td class="cum-score"><%= cumulative_score %></td>
         </script>
 
     </body>

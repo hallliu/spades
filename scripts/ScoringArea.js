@@ -8,52 +8,60 @@ define(["Constants", "underscore", "ScoreModel"], function(Constants, _, ScoreMo
          */
         var ScoringArea = function() {
             this.el = $("#scoring-area");
+            this.team_areas = {
+                team_1: $("#team-1-area"),
+                team_2: $("#team-2-area"),
+            };
+
             this.score_template = _.template($("#score_row_template").html());
             this.el.css("left",
                     $("#main-container").position().left + $("#main-container").width());
-            this.score_model = new ScoreModel.ScoreModel();
+            this.score_model = ScoreModel.obtain();
             this.score_model.add_listener(this);
-
-            this.team_name_to_model_name = {};
-            this.player_name_to_model_name = {};
         };
 
         /**
          * name_dict is a dict of the form: 
-         * {team_name_1: [player_1, player_2],
-         *  team_name_2: [player_3, player_4]}
+         * {team_1: {
+         *      name: <team's name>
+         *      player_1: <team 1 player 1 name>
+         *      player_2: <team 1 player 2 name>
+         *  },
+         *  team_2: {
+         *      name: <team's name>
+         *      player_1: <team 2 player 1 name>
+         *      player_2: <team 2 player 2 name>
+         *  }}
          */
-        ScoringArea.prototype.update_names = function(team_name_to_players) {
-            // TODO: add checks for dup names
-            
-            this.team_name_to_players = team_name_to_players;
+        ScoringArea.prototype.update_names = function(team_name_dict) {
+            _.each(team_name_dict, function(name_info, team_id) {
+                var team_area = this.team_areas[team_id];
+                team_area.find(".team-name").html(name_info.name);
+                team_area.find(".player-1").html(name_info.player_1);
+                team_area.find(".player-2").html(name_info.player_2);
+            }, this);
+        };
 
-            var player_to_team = _.reduce(name_dict, function(d, vs, k) {
-                vs.forEach(function(v) {
-                    d[v] = k;
-                });
-                return d;
-            }, {}); // in python, {v: k for v in vs for k, vs in name_dict.items()}
-
-            this.team_name_to_model_name = _.chain(team_name_to_players)
-                    .keys()
-                    .map(function(team_name, idx) {
-                        return [team_name, "team_" + (idx + 1)];
-                    })
-                    .object().value();
-            this.player_name_to_model_name = _.chain(team_name_to_players)
-                    .values()
-                    .map(function(players) {
-                        return _.object(_.map(players, function(player, idx) {
-                            return [player, "player_" + (idx + 1)];
-                        }));
-                    })
-                    .reduce(function(d, v) {return _.extend(d, v)}, {})
-                    .value();
-
-            this.on_names_changed();
+        ScoringArea.prototype.on_score_row_added = function() {
+            _.each(this.team_areas, function(team_area, team_id) {
+                var new_score_row = $("<tr></tr>");
+                new_score_row.addClass("scoring-row");
+                team_area.find("tbody").append(new_score_row);
+                this.on_scores_updated(team_id);
+            }, this);
         };
         
+        ScoringArea.prototype.on_scores_updated = function(team_id) {
+            var latest_score_elem = this.team_areas[team_id].find("tbody tr:last");
+            var latest_score_row = _.last(this.score_model.score_rows[team_id]);
+            latest_score_elem.html(this.score_template({
+                bid_1: latest_score_row.bids.player_1,
+                bid_2: latest_score_row.bids.player_2,
+                round_score: latest_score_row.round_score,
+                cumulative_score: latest_score_row.cumulative_score,
+            }));
+        };
+
         var obtain = function() {
             scoring_area_singleton = scoring_area_singleton || new ScoringArea();
             return scoring_area_singleton;

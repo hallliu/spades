@@ -1,7 +1,9 @@
 "use strict";
 
 define(["./Constants", "underscore"], function(Constants, _) {
-    var ScoreModel = function() {
+    var obtain = function() {
+        var score_model_singleton;
+
         var ScoreModel = function() {
             this.listeners = [];
 
@@ -12,8 +14,6 @@ define(["./Constants", "underscore"], function(Constants, _) {
             this.cumulative_scores = {};
             this.cumulative_scores.team_1 = 0;
             this.cumulative_scores.team_2 = 0;
-
-            this.start_new_round();
         };
 
         ScoreModel.prototype.start_new_round = function() {
@@ -43,7 +43,7 @@ define(["./Constants", "underscore"], function(Constants, _) {
             var current_score_row = team_score_rows[team_score_rows.length - 1];
             current_score_row.bids[player] = bid_val;
             
-            this.update_listeners(function() {l.on_bid_added(team, player);});
+            this.update_listeners(function(l) {l.on_scores_updated(team);});
         };
 
         ScoreModel.prototype.set_score = function(team, score) {
@@ -51,10 +51,10 @@ define(["./Constants", "underscore"], function(Constants, _) {
             var current_score_row = team_score_rows[team_score_rows.length - 1];
             var last_score_row = team_score_rows[team_score_rows.length - 2];
             current_score_row.round_score = score;
-            current_score_row.cumulative_score = last_score_row.cumulative_score + score;
             this.cumulative_scores[team] += score;
+            current_score_row.cumulative_score = this.cumulative_scores[team];
 
-            this.update_listeners(function() {l.on_scores_updated(team);});
+            this.update_listeners(function(l) {l.on_scores_updated(team);});
         };
 
         ScoreModel.prototype.update_listeners = function(listener_fn) {
@@ -67,8 +67,13 @@ define(["./Constants", "underscore"], function(Constants, _) {
             this.listeners.push(listener);
         };
 
-        return ScoreModel;
+        var obtain = function() {
+            score_model_singleton = score_model_singleton || new ScoreModel();
+            return score_model_singleton;
+        };
+
+        return obtain;
     }();
 
-    return {ScoreModel: ScoreModel};
+    return {obtain: obtain};
 });
