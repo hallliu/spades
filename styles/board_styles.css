@@ -1,6 +1,4 @@
 #main-container {
-    width: 1000px;
-    height: 750px;
     background-color: #45a5ae;
     position: absolute;
 }
@@ -12,8 +10,6 @@
 
 #play-area {
     position: absolute;
-    width: 282px;
-    height: 417px;
 }
 
 .single-card-container {

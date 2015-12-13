@@ -14,8 +14,6 @@ define(["Constants", "underscore", "ScoreModel"], function(Constants, _, ScoreMo
             };
 
             this.score_template = _.template($("#score_row_template").html());
-            this.el.css("left",
-                    $("#main-container").position().left + $("#main-container").width());
             this.score_model = ScoreModel.obtain();
             this.score_model.add_listener(this);
         };

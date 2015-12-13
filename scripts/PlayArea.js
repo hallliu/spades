@@ -39,10 +39,6 @@ define(["underscore", "./Constants"], function(_, Constants) {
         var PlayArea = function() {
             this.el = $("#play-area");
             this.cards = {};
-
-            // Making side-effects here because this is a singleton to be initialized at game start
-            this.el.css("left", ($("#main-container").width() - this.el.width()) / 2);
-            this.el.css("top", ($("#main-container").height() - this.el.height()) / 2);
         };
 
         PlayArea.prototype.set_suit = function(suit) {

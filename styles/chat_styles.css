@@ -1,6 +1,8 @@
 #chat-area {
     height: 350px;
     width: 351px;
+    margin-left: 5px;
+
 }
 
 #chat-display-box {

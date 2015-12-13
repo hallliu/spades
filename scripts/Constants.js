@@ -1,4 +1,21 @@
 define({
+    MAIN_BOARD_DIMS: {
+        height: 750,
+        width: 1000,
+        top: 0,
+        left: 0,
+    },
+
+    PLAY_AREA_DIMS: {
+        height: 282,
+        width: 417,
+    },
+
+    RIGHT_PANEL_DIMS: {
+        width: 351,
+        border_size: 2,
+    },
+
     CARD_HEIGHT: 135,
     CARD_WIDTH: 90,
     CARD_OFFSET: 20, // The offset when the cards are in the deck

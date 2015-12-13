@@ -7,7 +7,7 @@
         <link rel="stylesheet" type="text/css" href="styles/scoring_styles.css">
         <link rel="stylesheet" type="text/css" href="styles/chat_styles.css">
     </head>
-    <body><!--
+    <body>
         <div id="main-container">
             <div id="play-area">
                 <div class="single-card-container" id="top-played-card"></div>
@@ -18,45 +18,47 @@
             </div>
         </div>
 
-        <div id="scoring-area">
-            <div class="team-area" id="team-1-area">
-                <table>
-                    <thead>
-                        <tr><th colspan=4 class="team-name">Team 1</th></tr>
-                        <tr class="score-details">
-                            <th colspan=1><span class="player-1"></span> bid</th>
-                            <th colspan=1><span class="player-2"></span> bid</th>
-                            <th colspan=1>Round score</th>
-                            <th colspan=1>Total score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+        <div id="right-panel">
+            <div id="scoring-area">
+                <div class="team-area" id="team-1-area">
+                    <table>
+                        <thead>
+                            <tr><th colspan=4 class="team-name">Team 1</th></tr>
+                            <tr class="score-details">
+                                <th colspan=1><span class="player-1"></span> bid</th>
+                                <th colspan=1><span class="player-2"></span> bid</th>
+                                <th colspan=1>Round score</th>
+                                <th colspan=1>Total score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="team-area" id="team-2-area">
+                    <table>
+                        <thead>
+                            <tr><th colspan=4 class="team-name">Team 1</th></tr>
+                            <tr class="score-details">
+                                <th colspan=1><span class="player-1"></span> bid</th>
+                                <th colspan=1><span class="player-2"></span> bid</th>
+                                <th colspan=1>Round score</th>
+                                <th colspan=1>Total score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="team-area" id="team-2-area">
-                <table>
-                    <thead>
-                        <tr><th colspan=4 class="team-name">Team 1</th></tr>
-                        <tr class="score-details">
-                            <th colspan=1><span class="player-1"></span> bid</th>
-                            <th colspan=1><span class="player-2"></span> bid</th>
-                            <th colspan=1>Round score</th>
-                            <th colspan=1>Total score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+            <div id="chat-area">
+                <div id="chat-display-box">
+                </div>
+                <input id="chat-text-entry" type="text" wrap="hard">
+                </input>
             </div>
-        </div>-->
-
-        <div id="chat-area">
-            <div id="chat-display-box">
-            </div>
-            <input id="chat-text-entry" type="text" wrap="hard">
-            </input>
         </div>
         <button onClick="play_area.clear('top');">Clear to top</button>
 

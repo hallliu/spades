@@ -1,7 +1,9 @@
 "use strict";
 
-define(["./CardUI", "./PlayArea", "velocity", "underscore", "ScoringArea", "ScoreModel"],
-        function(CardUI, PlayArea, Velocity, _, ScoringArea, ScoreModel) {
+define(["./CardUI", "./PlayArea", "velocity", "underscore", "ScoringArea",
+       "ScoreModel", "UIPosition"],
+        function(CardUI, PlayArea, Velocity, _, ScoringArea, ScoreModel, UIPosition) {
+    UIPosition.set_positions();        
     var all_cards = _.range(52);
     all_cards = _.shuffle(all_cards);
     var positions = ["bottom", "top", "left", "right"];
@@ -24,14 +26,13 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "ScoringArea", "Scor
     window.scoring_area = scoring_area;
     window.score_model = score_model;
     window.team_name_info = {team_1: {
-  name: "Team 1",
-  player_1: "playerA",
-  player_2: "playerB",
-},
-                      team_2: {
-                        name: "Team 2",
-                        player_1: "playerC",
-                        player_2: "playerD",
-                      }
-                     }
+        name: "Team 1",
+        player_1: "playerA",
+        player_2: "playerB",
+    },
+    team_2: {
+        name: "Team 2",
+        player_1: "playerC",
+        player_2: "playerD",
+    }}
 });

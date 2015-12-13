@@ -1,10 +1,12 @@
-#scoring-area {
-    width: 351px;
-    height: 746px;
+#right-panel {
     margin-left: 5px;
+    position: absolute;
+}
+
+#scoring-area {
+    height: 75%;
     border: 2px solid #89B6D6;
     border-radius: 10px;
-    position: absolute;
 }
 
 .team-area {
