@@ -12,7 +12,7 @@ define({
     },
 
     RIGHT_PANEL_DIMS: {
-        width: 351,
+        width: 355,
         border_size: 2,
     },
 

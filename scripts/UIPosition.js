@@ -25,7 +25,7 @@ define(["Constants", "underscore"], function(Constants, _) {
         }, Constants.PLAY_AREA_DIMS));
 
         set_dims($("#right-panel"), _.extend({
-            left: Constants.MAIN_BOARD_DIMS.width + Constants.MAIN_BOARD_DIMS.left,
+            left: Constants.MAIN_BOARD_DIMS.width + Constants.MAIN_BOARD_DIMS.left + 8,
             top: Constants.MAIN_BOARD_DIMS.top,
             height: Constants.MAIN_BOARD_DIMS.height - 2 * Constants.RIGHT_PANEL_DIMS.border_size,
         }, Constants.RIGHT_PANEL_DIMS));

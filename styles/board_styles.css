@@ -1,4 +1,9 @@
+body {
+    margin: 0;
+}
+
 #main-container {
+    margin: 8px;
     background-color: #45a5ae;
     position: absolute;
 }
