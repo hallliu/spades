@@ -7,13 +7,17 @@ define({
     },
 
     PLAY_AREA_DIMS: {
-        height: 282,
-        width: 417,
+        width: 282,
+        height: 417,
     },
 
     RIGHT_PANEL_DIMS: {
         width: 355,
         border_size: 2,
+    },
+
+    CHAT_AREA_DIMS: {
+        width: 351,
     },
 
     CARD_HEIGHT: 135,

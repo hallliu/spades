@@ -1,9 +1,17 @@
 "use strict";
 
 define(["./CardUI", "./PlayArea", "velocity", "underscore", "ScoringArea",
-       "ScoreModel", "UIPosition"],
-        function(CardUI, PlayArea, Velocity, _, ScoringArea, ScoreModel, UIPosition) {
+       "ScoreModel", "UIPosition", "ChatArea"],
+        function(CardUI, PlayArea, Velocity, _, ScoringArea,
+                 ScoreModel, UIPosition, ChatArea) {
     UIPosition.set_positions();        
+
+    ChatArea.obtain().add_listener({
+        on_text_entered: function(t) {
+            ChatArea.obtain().push_chat_message("hallliu: " + t);
+        }
+    });
+
     var all_cards = _.range(52);
     all_cards = _.shuffle(all_cards);
     var positions = ["bottom", "top", "left", "right"];
@@ -25,7 +33,7 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "ScoringArea",
     window.play_area = play_area;
     window.scoring_area = scoring_area;
     window.score_model = score_model;
-    window.team_name_info = {team_1: {
+    scoring_area.update_names({team_1: {
         name: "Team 1",
         player_1: "playerA",
         player_2: "playerB",
@@ -34,5 +42,5 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "ScoringArea",
         name: "Team 2",
         player_1: "playerC",
         player_2: "playerD",
-    }}
+    }});
 });

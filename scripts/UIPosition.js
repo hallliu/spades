@@ -29,6 +29,8 @@ define(["Constants", "underscore"], function(Constants, _) {
             top: Constants.MAIN_BOARD_DIMS.top,
             height: Constants.MAIN_BOARD_DIMS.height - 2 * Constants.RIGHT_PANEL_DIMS.border_size,
         }, Constants.RIGHT_PANEL_DIMS));
+
+        set_dims($("#chat-area"), Constants.CHAT_AREA_DIMS);
     }
 
     return {set_positions: set_positions};

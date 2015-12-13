@@ -1,21 +1,28 @@
 #chat-area {
-    height: 350px;
-    width: 351px;
-    margin-left: 5px;
-
+    top: 69%;
+    height: 30%;
+    border: 2px solid #89B6D6;
+    border-radius: 10px;
+    position: absolute;
+    padding: 3px;
 }
 
 #chat-display-box {
     overflow-y: auto;
     width: 100%;
-    height: 90%;
+    height: 89%;
+    position: relative;
 }
 
 #chat-text-entry {
     width: 100%;
-    height: 10%;
     resize: none;
-    max-height: 10%;
-    min-height: 10%;
+    margin-top: 5px;
     overflow-y: auto;
+    position: relative;
+    white-space: pre-wrap;
+}
+
+#chat-display-box p {
+    margin: 0.3em;
 }
