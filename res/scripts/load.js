@@ -4,6 +4,7 @@ require.config({
         "jquery": "lib/jquery.min",
         "velocity": "lib/velocity.min",
         "underscore": "lib/underscore",
+        "socketio": "../socket.io/socket.io",
     },
     shim: {
         "velocity": {
@@ -11,6 +12,9 @@ require.config({
         },
         "underscore": {
             exports: ["_"],
+        },
+        "socketio": {
+            exports: ["io"],
         },
     },
 });

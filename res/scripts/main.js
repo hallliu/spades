@@ -1,8 +1,8 @@
 "use strict";
 
-define(["./CardUI", "./PlayArea", "velocity", "underscore", "ScoringArea",
+define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "ScoringArea",
        "ScoreModel", "UIPosition", "ChatArea"],
-        function(CardUI, PlayArea, Velocity, _, ScoringArea,
+        function(CardUI, PlayArea, Velocity, _, io, ScoringArea,
                  ScoreModel, UIPosition, ChatArea) {
     UIPosition.set_positions();        
 
@@ -33,6 +33,7 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "ScoringArea",
     window.play_area = play_area;
     window.scoring_area = scoring_area;
     window.score_model = score_model;
+    window.socket = io();
     scoring_area.update_names({team_1: {
         name: "Team 1",
         player_1: "playerA",
