@@ -4,12 +4,60 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "Scoring
        "ScoreModel", "UIPosition", "ChatArea"],
         function(CardUI, PlayArea, Velocity, _, io, ScoringArea,
                  ScoreModel, UIPosition, ChatArea) {
+    var socket = io();
+    var player_name = ""; // TODO: move to global configs
+
     UIPosition.set_positions();        
 
+    // chat listener
     ChatArea.obtain().add_listener({
         on_text_entered: function(t) {
-            ChatArea.obtain().push_chat_message("hallliu: " + t);
+            if (t.charAt(0) === '/') {
+               return;
+            } 
+            socket.emit("chat_message", {
+                author: player_name,
+                message: t,
+            });
         }
+    });
+
+    // command listener
+    ChatArea.obtain().add_listener({
+        on_text_entered: function(t) {
+            if (t.charAt(0) !== '/') {
+                return;
+            }
+            if (t.charAt(1) === '/') {
+                // escape with slash
+                socket.emit("chat_message", {
+                    author: player_name,
+                    message: t.slice(1),
+                });
+            }
+                
+            var command_tokens = t.split(/\s+/);
+            switch (command_tokens[0].slice(1)) {
+                case "name":
+                    if (command_tokens.length < 2 || command_tokens[1].length === 0) {
+                        console.log("Name must be of nonzero length");
+                        break;
+                    }
+                    console.log("player name: " + command_tokens[1]);
+                    socket.emit("name_change", {
+                        old_name: player_name,
+                        new_name: command_tokens[1],
+                    });
+
+                    player_name = command_tokens[1];
+                    break;
+            }
+        }
+    });
+
+    // Socket listener
+    socket.on("chat_message", function(msg) {
+        ChatArea.obtain().push_chat_message(`${msg.author}: ${msg.message}`);
     });
 
     var all_cards = _.range(52);
