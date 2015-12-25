@@ -1,0 +1,165 @@
+Team numbering convention: players are 0, 1, 2, 3.
+0 and 2 are partners. 1 and 3 are partners.
+
+-----------------------
+Initiation:
+
+Player enters name. Chooses whether to start a new room (a) or enter existing room (b)
+(a): 
+(Client) HTTP POST to server :
+    {name: <player name>,
+     new_session: true}
+
+(Server) Create a player internally and 
+Server response:
+    {room_id: <generate room id>,
+     player_uuid: <some uuid>, <- this is used to set up the socket later on
+     player_position: <0, 1, 2, or 3>}
+
+(Client) Open socket to server
+(Client) Send a message "register_socket":
+    {player_uuid: <same uuid from before>}
+
+(Server) Waits and sends further notifications of people joining
+
+(b):
+(Client) HTTP POST to server:
+    {name: <player name>,
+     new_session: false,
+     room_id: <the room to join}
+
+(Server) If the room is full, respond with 409 and an error: {error: "Room is full"}
+         If the room does not exist, respond with a 404.
+
+         If the room is partially occupied, respond with a listing of players and partnerships.
+         Speculatively hold a position for the player and generate a uuid for the player.
+         {player_uuid: <generated id>,
+          current_players: {
+              0: {
+                  name: <name for 0>,
+                  uuid: <uuid for 0>,
+              },
+              etc.
+          }
+         }
+         Indices which are not included are available to be filled.
+
+(Client) Using the player uuid, open a socket and register it as above.
+
+(Client) Format the response to provide a coherent choice to the player (use the console for now, maybe UI stuff later?)
+
+(Client) Respond with player's choice. Send a message "position_choice":
+    {position: <0, 1, 2, or 3>}
+
+(Server) If position is no longer available, respond with "position_full" message. If the room is now full, respond with
+         "room_full" message. The position_full message will contain the same info as the player listing above.
+
+         If player has successfully filled the position, respond with "successful_join".
+
+(Client) If there are no further spots available, inform the player, but keep the socket and the player uuid. If there
+         are more spots available, redo the choice dialog from above.
+
+----------------------
+Starting a game and bidding:
+
+(Server) When a room has filled up, initialize an internal game state and inform all players via the "start_game" message:
+    {
+        cards: [array of ints]
+    }
+         When starting a round instead of a game, use the "start_round" message.
+
+(Client) The client should clear the scoreboard when receiving a "start_game" message.
+
+(Server) Determine who the first to bid is, and send out a "bid_round" message:
+    {
+        bidding_user: <player uuid>
+    }
+
+(Client) If the uuid matches own uuid, prompt the user to make a bid. When the bid is made, send a "make_bid" message:
+    {
+        bid: <integer>
+    }
+
+(Server): If the bid is valid (i.e. some integer between 0 and 13, inclusive), broadcast a "user_bid" message:
+    {
+        bidding_user: <player uuid>,
+        bid: <integer>
+    }
+          then immediately go back to the bid_round stage.
+          If the bid is invalid, inform the user of this fact via "invalid_bid":
+    {
+        reason: <insert snark here>
+    }
+
+(Client) The client will take the "user_bid" message with ones own uuid as an indication of success.
+
+-----------------------
+Gameplay:
+
+(Server): After all players have bid, server will send the "make_play" message to the first player.
+
+(Client): Sends a "play_card" message to the server:
+    {
+        card: <integer card id>
+    }
+          Implement client-side verification for whether the play is valid.
+
+(Server): If play is valid, broadcast "play_made" message:
+    {
+        card: <played card>,
+        leading_suit: <0, 1, 2, or 3, corresponding to the multiplier of 13>
+    }
+          then immediately send "make_play" to next user if not all users have played.
+
+          If play is not valid, send "invalid_play" message to player:
+    {
+        reason: <snark>
+    }
+
+(Client): "invalid_play" should never be received.
+          When "play_made" message is received, update the UI accordingly. 
+
+(Server): When all players have played, broadcast "end_of_trick" message:
+    {
+        winner: <player uuid>
+    }
+          then immediately go back to "make_play" for the next trick
+
+          If the hand has concluded, move on to the scoring section.
+
+------------------------
+Scoring:
+
+(Server): Tally up the scores and broadcast the "round_scores" message:
+    {
+        tricks_taken: {
+            <player uuid>: <their number of tricks>,
+            ...
+        },
+        scores: {
+            0: <this round's score for players 0 and 2>,
+            1: <this round's score for players 1 and 3>
+        }
+    }
+
+(Client): Use this information to update the UI and do not respond.
+
+------------------------
+Misc client commands:
+
+"set_team_name": {
+    name: <sufficiently punny team name>
+} -- Server will always broadcast "team_name_set": {
+    team: <0 or 1>,
+    name: <name as above>
+} in response.
+
+"set_name": {
+    name: <player's new name>
+} -- Server will always broadcast "name_set": {
+    player_uuid: <player's uuid>,
+    name: <name as above>
+} in response.
+
+----------------------------
+TODO: Handling disconnects
