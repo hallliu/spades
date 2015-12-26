@@ -6,7 +6,7 @@ Initiation:
 
 Player enters name. Chooses whether to start a new room (a) or enter existing room (b)
 (a): 
-(Client) HTTP POST to server :
+(Client) HTTP POST to server (/register):
     {name: <player name>,
      new_session: true}
 
