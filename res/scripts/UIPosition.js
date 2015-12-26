@@ -18,6 +18,7 @@ define(["Constants", "underscore"], function(Constants, _) {
     };
 
     var fix_scoring_ui = function() {
+        // May Satan bless this kludgey fix
         var left_width = 0;
         var right_width = 0;
         _.each($(".score-details").children().slice(0, 4), function(x) {
@@ -26,7 +27,6 @@ define(["Constants", "underscore"], function(Constants, _) {
         _.each($(".score-details").children().slice(4, 8), function(x) {
             right_width += $(x).width();
         });
-        // May Satan bless this kludgey fix
         $(".team-0-name").width(left_width + 8);
         $(".team-1-name").width(right_width + 8);
     };
