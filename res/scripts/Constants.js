@@ -12,12 +12,12 @@ define({
     },
 
     RIGHT_PANEL_DIMS: {
-        width: 355,
+        width: 365,
         border_size: 2,
     },
 
     CHAT_AREA_DIMS: {
-        width: 351,
+        width: 361,
     },
 
     CARD_HEIGHT: 135,

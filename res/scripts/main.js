@@ -1,12 +1,9 @@
 "use strict";
 
 define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "ScoringArea",
-       "ScoreModel", "UIPosition", "ChatArea"],
+       "ScoreModel", "UIPosition", "ChatArea", "Command", "Globals"],
         function(CardUI, PlayArea, Velocity, _, io, ScoringArea,
-                 ScoreModel, UIPosition, ChatArea) {
-    var socket = io();
-    var player_name = ""; // TODO: move to global configs
-
+                 ScoreModel, UIPosition, ChatArea, Command, Globals) {
     UIPosition.set_positions();        
 
     // chat listener
@@ -24,40 +21,7 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "Scoring
 
     // command listener
     ChatArea.obtain().add_listener({
-        on_text_entered: function(t) {
-            if (t.charAt(0) !== '/') {
-                return;
-            }
-            if (t.charAt(1) === '/') {
-                // escape with slash
-                socket.emit("chat_message", {
-                    author: player_name,
-                    message: t.slice(1),
-                });
-            }
-                
-            var command_tokens = t.split(/\s+/);
-            switch (command_tokens[0].slice(1)) {
-                case "name":
-                    if (command_tokens.length < 2 || command_tokens[1].length === 0) {
-                        console.log("Name must be of nonzero length");
-                        break;
-                    }
-                    console.log("player name: " + command_tokens[1]);
-                    socket.emit("name_change", {
-                        old_name: player_name,
-                        new_name: command_tokens[1],
-                    });
-
-                    player_name = command_tokens[1];
-                    break;
-            }
-        }
-    });
-
-    // Socket listener
-    socket.on("chat_message", function(msg) {
-        ChatArea.obtain().push_chat_message(`${msg.author}: ${msg.message}`);
+        on_text_entered: Command.command_text_processor
     });
 
     var all_cards = _.range(52);
@@ -81,15 +45,13 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "Scoring
     window.play_area = play_area;
     window.scoring_area = scoring_area;
     window.score_model = score_model;
-    window.socket = io();
-    scoring_area.update_names({team_1: {
-        name: "Team 1",
-        player_1: "playerA",
-        player_2: "playerB",
-    },
-    team_2: {
-        name: "Team 2",
-        player_1: "playerC",
-        player_2: "playerD",
-    }});
+    window.Globals = Globals;
+    scoring_area.update_names({
+        team_0: "Team 1",
+        team_1: "Team 2",
+        player_0: "playerA",
+        player_1: "playerB",
+        player_2: "playerC",
+        player_3: "playerD",
+    });
 });

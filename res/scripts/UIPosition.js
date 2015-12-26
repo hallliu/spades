@@ -17,6 +17,20 @@ define(["Constants", "underscore"], function(Constants, _) {
         if (dims.height) elem.height(dims.height);
     };
 
+    var fix_scoring_ui = function() {
+        var left_width = 0;
+        var right_width = 0;
+        _.each($(".score-details").children().slice(0, 4), function(x) {
+            left_width += $(x).width();
+        });
+        _.each($(".score-details").children().slice(4, 8), function(x) {
+            right_width += $(x).width();
+        });
+        // May Satan bless this kludgey fix
+        $(".team-0-name").width(left_width + 8);
+        $(".team-1-name").width(right_width + 8);
+    };
+
     var set_positions = function() {
         set_dims($("#main-container"), Constants.MAIN_BOARD_DIMS);
         set_dims($("#play-area"), _.extend({
@@ -31,7 +45,16 @@ define(["Constants", "underscore"], function(Constants, _) {
         }, Constants.RIGHT_PANEL_DIMS));
 
         set_dims($("#chat-area"), Constants.CHAT_AREA_DIMS);
+
+        set_dims($("tbody"), {
+            height: $("#scoring-area").height() - $("#scoring-area thead").height()
+        });
+
+        fix_scoring_ui();
     }
 
-    return {set_positions: set_positions};
+    return {
+        set_positions: set_positions,
+        fix_scoring_ui: fix_scoring_ui,
+    };
 });

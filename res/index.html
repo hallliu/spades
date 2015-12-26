@@ -20,37 +20,26 @@
 
         <div id="right-panel">
             <div id="scoring-area">
-                <div class="team-area" id="team-1-area">
-                    <table>
-                        <thead>
-                            <tr><th colspan=4 class="team-name">Team 1</th></tr>
-                            <tr class="score-details">
-                                <th colspan=1><span class="player-1"></span> bid</th>
-                                <th colspan=1><span class="player-2"></span> bid</th>
-                                <th colspan=1>Round score</th>
-                                <th colspan=1>Total score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="team-area" id="team-2-area">
-                    <table>
-                        <thead>
-                            <tr><th colspan=4 class="team-name">Team 1</th></tr>
-                            <tr class="score-details">
-                                <th colspan=1><span class="player-1"></span> bid</th>
-                                <th colspan=1><span class="player-2"></span> bid</th>
-                                <th colspan=1>Round score</th>
-                                <th colspan=1>Total score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan=4 class="team-0-name">Team 0</th>
+                            <th colspan=4 class="team-1-name">Team 1</th>
+                        </tr>
+                        <tr class="score-details">
+                            <th colspan=1><span class="player-0"></span> bid</th>
+                            <th colspan=1><span class="player-2"></span> bid</th>
+                            <th colspan=1>Round score</th>
+                            <th colspan=1>Total score</th>
+                            <th colspan=1><span class="player-1"></span> bid</th>
+                            <th colspan=1><span class="player-3"></span> bid</th>
+                            <th colspan=1>Round score</th>
+                            <th colspan=1>Total score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
 
             <div id="chat-area">
@@ -79,10 +68,14 @@
         </script>
 
         <script type="text/template" id="score_row_template">
-            <td class="bid-1"><%= bid_1 %></td>
-            <td class="bid-2"><%= bid_2 %></td>
-            <td class="score"><%= round_score %></td>
-            <td class="cum-score"><%= cumulative_score %></td>
+            <td class="bid-0"><%= bid_0 %></td>
+            <td class="bid-1"><%= bid_2 %></td>
+            <td class="score"><%= round_score_0 %></td>
+            <td class="cum-score"><%= cumulative_score_0 %></td>
+            <td class="bid-0"><%= bid_1 %></td>
+            <td class="bid-1"><%= bid_3 %></td>
+            <td class="score"><%= round_score_1 %></td>
+            <td class="cum-score"><%= cumulative_score_1 %></td>
         </script>
 
     </body>

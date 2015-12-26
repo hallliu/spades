@@ -11,19 +11,22 @@
     position: absolute;
 }
 
-.team-area {
-    float: left;
-    width: 175px;
-    height: 100%;
-}
-
-#team-1-area {
-    border-right: 1px dotted #89B6D6;
-}
-
 table {
     width: 100%;
+    border-spacing: 0;
 }
+
+/* Styling for the center line */
+
+.team-0-name {
+    border-right: 1px solid #89B6D6;
+}
+
+tr td:nth-child(4), tr th:nth-child(4) {
+    border-right: 1px solid #89B6D6;
+}
+
+/* Stuff to make the text look nicer */
 
 .score-details th {
     font-size: 10px;
@@ -31,4 +34,24 @@ table {
 
 .scoring-row {
     text-align: center;
+}
+
+/* Scrolling for the scores */
+tbody {
+    display:block;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+tr {
+    display: block;
+    position: relative;
+}
+
+th, td {
+    min-width: 50px;
+}
+
+th:nth-child(8), td:nth-child(8) {
+    width: 50px;
 }

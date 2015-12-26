@@ -7,54 +7,52 @@ define(["./Constants", "underscore"], function(Constants, _) {
         var ScoreModel = function() {
             this.listeners = [];
 
-            this.score_rows = {};
-            this.score_rows.team_1 = [];
-            this.score_rows.team_2 = [];
+            this.score_rows = [];
 
             this.cumulative_scores = {};
+            this.cumulative_scores.team_0 = 0;
             this.cumulative_scores.team_1 = 0;
-            this.cumulative_scores.team_2 = 0;
         };
 
         ScoreModel.prototype.start_new_round = function() {
-            var construct_new_row = function(curr_score) {
-                return {
-                    bids: {},
-                    round_score: null,
-                    cumulative_score: curr_score,
-                };
+            var new_score_row = {
+                bid_0: "",
+                bid_1: "",
+                bid_2: "",
+                bid_3: "",
+                round_score_0: "",
+                round_score_1: "",
+                cumulative_score_0: this.cumulative_scores.team_0,
+                cumulative_score_1: this.cumulative_scores.team_1,
             };
 
-            var score_row_1 = construct_new_row(this.cumulative_scores.team_1);
-            var score_row_2 = construct_new_row(this.cumulative_scores.team_2);
-
-            this.score_rows.team_1.push(score_row_1);
-            this.score_rows.team_2.push(score_row_2);
+            this.score_rows.push(new_score_row);
 
             this.update_listeners(function(l) {l.on_score_row_added();});
         };
 
         /**
-         * team: either team_1 or team_2
-         * player: either player_1 or player_2
+         * player: 0, 1, 2, or 3
          */
-        ScoreModel.prototype.add_bid = function(team, player, bid_val) {
-            var team_score_rows = this.score_rows[team];
-            var current_score_row = team_score_rows[team_score_rows.length - 1];
-            current_score_row.bids[player] = bid_val;
+        ScoreModel.prototype.add_bid = function(player, bid_val) {
+            var current_score_row = _.last(this.score_rows);
+            current_score_row["bid_" + player] = bid_val;
             
-            this.update_listeners(function(l) {l.on_scores_updated(team);});
+            this.update_listeners(function(l) {l.on_scores_updated();});
         };
 
+        /**
+         * team: 0 or 1
+         */
         ScoreModel.prototype.set_score = function(team, score) {
-            var team_score_rows = this.score_rows[team];
-            var current_score_row = team_score_rows[team_score_rows.length - 1];
-            var last_score_row = team_score_rows[team_score_rows.length - 2];
-            current_score_row.round_score = score;
-            this.cumulative_scores[team] += score;
-            current_score_row.cumulative_score = this.cumulative_scores[team];
+            var current_score_row = _.last(this.score_rows);
 
-            this.update_listeners(function(l) {l.on_scores_updated(team);});
+            current_score_row["round_score_" + team] = score;
+            this.cumulative_scores["team_" + team] += score;
+
+            current_score_row["cumulative_score_" + team] = this.cumulative_scores["team_" + team];
+
+            this.update_listeners(function(l) {l.on_scores_updated();});
         };
 
         ScoreModel.prototype.update_listeners = function(listener_fn) {
