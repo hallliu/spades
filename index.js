@@ -24,9 +24,18 @@ var make_room_info = function(player_positions, player_to_name) {
         };
     });
 };
+
+var get_new_room_id = function() {
+    var room_id = uuid.v4().slice(0, 8);
+    if (!_.has(room_details, room_id)) {
+        return room_id;
+    }
+    return get_new_room_id();
+};
  
 var room_details = {};
 var player_to_name = {};
+var player_to_room = {};
 
 app.post("/register", function(req, res) {
     // Always generate a player id here
@@ -35,13 +44,15 @@ app.post("/register", function(req, res) {
 
     if (req.body.new_session) {
         console.log("New session requested.");
-        var new_room_id = uuid.v1();
+        var new_room_id = get_new_room_id();
+        player_to_room[player_uuid] = new_room_id;
         room_details[new_room_id] = {
             speculative_players: {},
             players: {
                 0: player_uuid,
             },
             teams: {}, // contains team names.
+            last_active: _.now(),
         }
         res.json({
             room_id: new_room_id,
@@ -65,11 +76,13 @@ app.post("/register", function(req, res) {
         }
 
         var room_info = make_room_info(this_room_details.players, player_to_name);
+        // TODO: remove this timeout after the player picks a position.
         this_room_details.speculative_players[player_uuid] = setTimeout(function() {
             console.log(`Player ${player_uuid} timed out picking a position.`);
             delete this_room_details.speculative_players[player_uuid];
-        }, 10000);
+        }, 60000);
 
+        player_to_room[player_uuid] = room_id;
         res.json({
             player_uuid: player_uuid,
             current_players: room_info,
@@ -78,26 +91,35 @@ app.post("/register", function(req, res) {
     }
 });
 
-var name_to_socket = {};
+var player_uuid_to_socket = {};
 
 io.on("connection", function(socket) {
+    var player_uuid;
+
     socket.on("chat_message", function(msg) {
         console.log(`Message from ${msg.author}: ${msg.message}`);
         io.emit("chat_message", msg);
     });
 
     socket.on("name_change", function(msg) {
-        if (msg.old_name.length === 0) {
-            console.log(`User ${msg.new_name} has registered themselves`);
-        } else {
-            console.log(`Name change from ${msg.old_name} to ${msg.new_name}`);
-        }
-        if (_.has(name_to_socket, msg.old_name)) {
-            delete name_to_socket[msg.old_name];
-        }
-        name_to_socket[msg.new_name] = socket;
+        // TODO: implement this
     });
 
+    socket.on("register_socket", function(msg) {
+        player_uuid_to_socket[msg.player_uuid] = socket;
+        player_uuid = msg.player_uuid;
+    });
+
+    socket.on("position_choice", function(msg) {
+        console.log(`Player ${player_uuid} chose position ` +
+                `${msg.position} in room ${player_to_room[player_uuid]}`);
+        var room_internals = room_details[player_to_room[player_uuid]];
+        if (!room_internals) {
+            console.log("an error has occurred");
+            return;
+        }
+        // TODO: normal flow
+    });
 
     socket.on("disconnect", function() {
         console.log("User disconnected");

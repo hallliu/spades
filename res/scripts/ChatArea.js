@@ -36,6 +36,18 @@ define(["Constants", "underscore"], function(Constants, _) {
             });
         };
 
+        ChatArea.prototype.push_info_message = function(text, color) {
+            color = color || "#909090";
+            var text_el = $("<p></p>");
+            text_el.html(text);
+            text_el.css("color", color);
+            this.chat_display_el.append(text_el);
+            text_el.velocity("scroll", {container: this.chat_display_el,
+                             duration: 400,
+                             easing: "spring",
+            });
+        };
+
         ChatArea.prototype.add_listener = function(l) {
             this.listeners.push(l);
         };

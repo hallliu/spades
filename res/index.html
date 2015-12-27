@@ -6,6 +6,10 @@
         <link rel="stylesheet" type="text/css" href="styles/board_styles.css">
         <link rel="stylesheet" type="text/css" href="styles/scoring_styles.css">
         <link rel="stylesheet" type="text/css" href="styles/chat_styles.css">
+        <link rel="stylesheet" type="text/css" href="styles/seat_picker_styles.css">
+        <link rel="stylesheet" type="text/css" href="styles/external/jquery-ui.min.css">
+        <link rel="stylesheet" type="text/css" href="styles/external/jquery-ui.structure.min.css">
+        <link rel="stylesheet" type="text/css" href="styles/external/jquery-ui.theme.min.css">
     </head>
     <body>
         <div id="main-container">
@@ -49,7 +53,13 @@
                 </input>
             </div>
         </div>
-        <button onClick="play_area.clear('top');">Clear to top</button>
+
+        <div id="seat-picker">
+            <button id="seat-0-picker"></button>
+            <button id="seat-1-picker"></button>
+            <button id="seat-2-picker"></button>
+            <button id="seat-3-picker"></button>
+        </div>
 
         <script data-main="scripts/load.js" src="scripts/lib/require.js"></script>
 

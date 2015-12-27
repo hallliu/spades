@@ -1,9 +1,9 @@
 "use strict";
 
 define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "ScoringArea",
-       "ScoreModel", "UIPosition", "ChatArea", "Command", "Globals"],
+       "ScoreModel", "UIPosition", "ChatArea", "Command", "Globals", "SeatPicker"],
         function(CardUI, PlayArea, Velocity, _, io, ScoringArea,
-                 ScoreModel, UIPosition, ChatArea, Command, Globals) {
+                 ScoreModel, UIPosition, ChatArea, Command, Globals, SeatPicker) {
     UIPosition.set_positions();        
 
     // chat listener
@@ -46,6 +46,7 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "Scoring
     window.scoring_area = scoring_area;
     window.score_model = score_model;
     window.Globals = Globals;
+    window.seat_picker = SeatPicker.obtain();
     scoring_area.update_names({
         team_0: "Team 1",
         team_1: "Team 2",

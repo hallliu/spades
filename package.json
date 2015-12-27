@@ -1,7 +1,7 @@
 {
-  "name": "socket-chat-example",
+  "name": "spades",
   "version": "0.0.1",
-  "description": "example socket thingy",
+  "description": "Spades~ hours of fun for both college dorms and prison.",
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.3",

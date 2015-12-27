@@ -7,6 +7,8 @@ define([], function() {
     var global_variables = {
         player_name: null,
         socket: null,
+        player_uuid: null,
+        room_id: null,
     };
 
     return global_variables;
