@@ -17,7 +17,7 @@ define({
     },
 
     CHAT_AREA_DIMS: {
-        width: 361,
+        width: 412,
     },
 
     CARD_HEIGHT: 135,

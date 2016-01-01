@@ -5,6 +5,7 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
+    "immutable": "^3.7.6",
     "node-uuid": "^1.4.7",
     "socket.io": "^1.3.7",
     "underscore": "^1.8.3"
