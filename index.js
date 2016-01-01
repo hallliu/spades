@@ -5,7 +5,7 @@ const _ = require("underscore");
 const uuid = require("node-uuid");
 
 const Immutable = require("immutable");
-const IMap = Immutable.Map();
+const IMap = Immutable.Map;
 
 const app = express();
 
@@ -33,32 +33,36 @@ var make_room_info = function(player_positions, player_to_name) {
 
 var get_new_room_id = function() {
     var room_id = uuid.v4().slice(0, 8);
-    if (!_.has(room_details, room_id)) {
+    if (!_.has(room_to_details, room_id)) {
         return room_id;
     }
     return get_new_room_id();
 };
  
-var room_details = IMap();
+var room_to_details = IMap();
 var player_to_name = IMap();
 var player_to_room = IMap();
 
 app.post("/register", function(req, res) {
     if (req.body.new_session) {
-        [player_to_room, room_details, player_to_name] =
-            registration.register_new_session(player_to_room, room_details, player_to_name,
-                                              req, res);
+        var ret = registration.register_new_session(player_to_room, room_to_details, player_to_name,
+                req, res);
+        player_to_room = ret[0];
+        room_to_details = ret[1];
+        player_to_name= ret[2];
     } else {  
         // TODO: remove this timeout after the player picks a position.
         const make_timeout = function(room_id, player_uuid) {
             return setTimeout(function() {
                 console.log(`Player ${player_uuid} timed out picking a position in room ${room_id}.`);
-                room_details = room_details.deleteIn([room_id, "speculative_players", player_uuid]);
-            }, 60000);
+                room_to_details = room_to_details.deleteIn([room_id, "speculative_players", player_uuid]);
+            }, 10000);
         };
-        [player_to_room, room_details, player_to_name] =
-            registration.register_player_to_room(player_to_room, room_details, player_to_name,
-                                                 make_timeout, req, res);
+        var ret = registration.register_player_to_room(player_to_room, room_to_details, player_to_name,
+                make_timeout, req, res);
+        player_to_room = ret[0];
+        room_to_details = ret[1];
+        player_to_name= ret[2];
     }
 });
 
@@ -83,8 +87,8 @@ io.on("connection", function(socket) {
 
     socket.on("position_choice", function(msg) {
         console.log(`Player ${player_uuid} chose position ` +
-                `${msg.position} in room ${player_to_room[player_uuid]}`);
-        var room_internals = room_details[player_to_room[player_uuid]];
+                `${msg.position} in room ${player_to_room.get(player_uuid)}`);
+        var room_internals = room_to_details.get(player_to_room.get(player_uuid));
         if (!room_internals) {
             console.log("an error has occurred");
             return;
