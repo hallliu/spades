@@ -99,6 +99,13 @@ define(["underscore", "./Constants"], function(_, Constants) {
             }, this);
         };
 
+        PlayArea.prototype.get_pile_offset = function() {
+            var offset = $("#top-played-card").offset();
+            offset.top += Constants.CARD_HEIGHT + 6;
+            offset.left += 2;
+            return offset;
+        };
+
         var obtain = function() {
             play_area_singleton = play_area_singleton || new PlayArea();
             return play_area_singleton;

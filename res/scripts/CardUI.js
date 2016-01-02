@@ -20,11 +20,21 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
                 "back": BACK_ID,
             }));
             this.flipped = false;
+            this.el.data("obj", this);
         };
 
-        Card.prototype.flip = function() {
-            this.el.find(".card").velocity({"rotateY": this.flipped ? "0deg" : "180deg"});
+        Card.prototype.flip = function(immediate) {
+            if (immediate === true) {
+                this.el.find(".card").css("transform", "rotateY(" + (this.flipped ? "0deg" : "180deg") + ")");
+            } else {
+                this.el.find(".card").velocity({"rotateY": this.flipped ? "0deg" : "180deg"});
+            }
             this.flipped = !this.flipped;
+        };
+
+        Card.prototype.attach_to_pile = function(pile_offset) {
+            this.el.appendTo("#main-container");
+            this.el.offset(pile_offset);
         };
 
         Card.prototype.on_added = function(deck, active) {
@@ -188,15 +198,25 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
             this._render();
         };
 
-        Deck.prototype.add_card = function(card) {
-            this.cards.push(card);
+        Deck.prototype.initialize_with_cards = function(cards) {
+            this.cards = cards;
             this.cards.sort(card_sort_cmp);
-            var new_card_idx = _.indexOf(this.cards, card);
+            this.cards.forEach(function(card, idx) {
+                card.on_added(this, this.is_active);
+                if (card.el.parent().length === 0) {
+                    card.el.appendTo(this.el);
+                    card.el.position({top: 0, left: 0});
+                }
+            }, this);
+            return this._update(1000);
+        };
 
-            card.on_added(this, this.is_active);
-            card.el.appendTo(this.el);
-            this._update_card(new_card_idx, false);
-            this._update();
+        Deck.prototype.flip_all_cards = function() {
+            _.each(this.cards, function(card, idx) {
+                setTimeout(function() {
+                    card.flip(false);
+                }, idx * 30);
+            });
         };
 
         Deck.prototype.remove_card = function(card_id) {
@@ -208,7 +228,7 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
             }
             var removed_card = this.cards[removed_card_idx];
             this.cards = _.reject(this.cards, function(card) {return card.cid === card_id});
-            this._update();
+            this._update(Constants.CARD_PLAY_SPEED);
         };
 
         Deck.prototype.rotate = function(angle) {
@@ -221,24 +241,26 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
                 if (card.el.parent().length === 0) {
                     card.el.appendTo(this.el);
                 }
-                this._update_card(idx, false);
+                this._update_card(idx, 0);
             }, this);
         };
 
-        Deck.prototype._update = function() {
+        Deck.prototype._update = function(duration) {
+            var card_animations = [];
             this.cards.forEach(function(card, idx) {
-                this._update_card(idx, true);
+                card_animations.push(this._update_card(idx, duration));
             }, this);
+            return Promise.all(card_animations);
         };
 
-        Deck.prototype._update_card = function(idx, animate) {
+        Deck.prototype._update_card = function(idx, animate_duration) {
             var card = this.cards[idx];
             var card_position = calc_card_pos(this.el, idx, this.cards.length);
             card.el.css("z-index", Constants.STARTING_Z + idx);
             card.el.data("orig-top", card_position.top);
-            if (animate) {
-                card.el.velocity({"left": card_position.left});
-                card.el.velocity({"top": card_position.top});
+            if (animate_duration > 0) {
+                return Velocity.animate(card.el, {"left": card_position.left, "top": card_position.top},
+                        {duration: animate_duration});
             } else {
                 card.el.css("left", card_position.left);
                 card.el.css("top", card_position.top);
