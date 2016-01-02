@@ -75,7 +75,6 @@ exports.register_player_to_room = function(
         return;
     }
 
-    // TODO: remove this timeout after the player picks a position.
     room_details = room_details.setIn([room_id, "speculative_players", player_uuid],
                                                 make_timeout(room_id, player_uuid));
     player_to_room = player_to_room.set(player_uuid, room_id);
@@ -87,4 +86,37 @@ exports.register_player_to_room = function(
     });
     console.log(`Responded to player ${player_uuid} with info for room ${room_id}`);
     return [player_to_room, room_details, player_to_name];
+};
+
+/**
+ * @param player_to_name: Immutable.Map - maps player ids to player names
+ * @param make_timeout: function - takes one argument (player id) and makes a timeout to delete that player
+ *         from speculative players
+ * @param room_details: Immutable.Map - contains the state of the room in question
+ * @param position: integer - the position the player is picking
+ * @param player_id: string - the id of the player
+ * @return [room_details, emit_args], where room_details is the modified state of the room and emit_args
+ *         are args to socket.emit (the result to send to the player).
+ */
+exports.set_player_position = function(player_to_name, make_timeout, room_details, position, player_id) {
+    var player_place_holder = room_details.getIn(["speculative_players", player_id], null);
+
+    if (room_details.get("players").size >= 4) {
+       return [room_details, ["room_full", {}]];
+    }
+    if (room_details.hasIn(["players", position])) {
+        room_details = room_details.setIn(["speculative_players", player_id],
+                make_timeout(player_id));
+
+        return [room_details, ["position_full", {
+            current_players: make_room_info(room_details.get("players"), player_to_name)
+        }]];
+    } 
+
+    if (player_place_holder) {
+        room_details = room_details.deleteIn(["speculative_players", player_id]);
+    }
+
+    room_details = room_details.setIn(["players", position], player_id);
+    return [room_details, ["successful_join", {}]];
 };

@@ -124,4 +124,52 @@ describe("User registration", function() {
         assert.strictEqual(ptr.get(this_player_id), room_id);
         assert.strictEqual(rtd.getIn([room_id, "speculative_players", this_player_id]), "TIMEOUT");
     });
+
+    it("Player responds to a full room", function() {
+        var [ptr, rtd, ptn] = create_populated_rooms();
+
+        var room_id = rtd.keys().next().value;
+        rtd = rtd.mergeIn([room_id, "players"], {1: "p1", 2: "p2", 3: "p3"});
+        ptn = ptn.merge({p1: "test1", p2: "test2", p3: "test3", this_player: "this player"});
+        var make_timeout = test.stub().returns("TIMEOUT");
+
+        var [new_details, socket_msg] = registration.set_player_position(ptn, make_timeout, rtd.get(room_id),
+                2, "this_player");
+        assert(new_details.equals(rtd.get(room_id)));
+        assert.strictEqual(socket_msg[0], "room_full");
+        assert(make_timeout.neverCalledWith(test.sinon.match.any));
+    });
+
+    it("Player's chosen position is full", function() {
+        var [ptr, rtd, ptn] = create_populated_rooms();
+
+        var room_id = rtd.keys().next().value;
+        rtd = rtd.setIn([room_id, "players", 2], "p2");
+        ptn = ptn.merge({p2: "test2", this_player: "this player"});
+        var make_timeout = test.stub().returns("TIMEOUTX");
+
+        var [new_details, socket_msg] = registration.set_player_position(ptn, make_timeout, rtd.get(room_id),
+                2, "this_player");
+        assert.strictEqual(socket_msg[0], "position_full");
+        assert.strictEqual(new_details.getIn(["speculative_players", "this_player"]), "TIMEOUTX");
+        
+        assert(_.has(socket_msg[1].current_players, 2));
+        assert.strictEqual(socket_msg[1].current_players[2].uuid, "p2");
+        assert.strictEqual(socket_msg[1].current_players[2].name, "test2");
+    });
+
+    it("Player successfully picks a position", function() {
+        var [ptr, rtd, ptn] = create_populated_rooms();
+
+        var room_id = rtd.keys().next().value;
+        ptn = ptn.merge({this_player: "this player"});
+        var make_timeout = test.stub().returns("TIMEOUTX");
+
+        var [new_details, socket_msg] = registration.set_player_position(ptn, make_timeout, rtd.get(room_id),
+                2, "this_player");
+        assert.strictEqual(socket_msg[0], "successful_join");
+        assert(!new_details.hasIn(["speculative_players", "this_player"]));
+        assert.strictEqual(new_details.getIn(["players", 2]), "this_player");
+        assert(make_timeout.neverCalledWith(test.sinon.match.any));
+    });
 });

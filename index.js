@@ -43,6 +43,14 @@ var room_to_details = IMap();
 var player_to_name = IMap();
 var player_to_room = IMap();
 
+const make_position_choice_timeout = function(room_id, player_uuid) {
+    var callback = function() {
+        console.log(`Player ${player_uuid} timed out picking a position in room ${room_id}.`);
+        room_to_details = room_to_details.deleteIn([room_id, "speculative_players", player_uuid]);
+    };
+    return setTimeout(callback, 10000);
+};
+
 app.post("/register", function(req, res) {
     if (req.body.new_session) {
         var ret = registration.register_new_session(player_to_room, room_to_details, player_to_name,
@@ -52,14 +60,8 @@ app.post("/register", function(req, res) {
         player_to_name= ret[2];
     } else {  
         // TODO: remove this timeout after the player picks a position.
-        const make_timeout = function(room_id, player_uuid) {
-            return setTimeout(function() {
-                console.log(`Player ${player_uuid} timed out picking a position in room ${room_id}.`);
-                room_to_details = room_to_details.deleteIn([room_id, "speculative_players", player_uuid]);
-            }, 10000);
-        };
         var ret = registration.register_player_to_room(player_to_room, room_to_details, player_to_name,
-                make_timeout, req, res);
+                make_position_choice_timeout, req, res);
         player_to_room = ret[0];
         room_to_details = ret[1];
         player_to_name= ret[2];
@@ -88,12 +90,21 @@ io.on("connection", function(socket) {
     socket.on("position_choice", function(msg) {
         console.log(`Player ${player_uuid} chose position ` +
                 `${msg.position} in room ${player_to_room.get(player_uuid)}`);
-        var room_internals = room_to_details.get(player_to_room.get(player_uuid));
+        var room_id = player_to_room.get(player_uuid);        
+        var room_internals = room_to_details.get(room_id);
         if (!room_internals) {
-            console.log("an error has occurred");
+            console.log("Player sending a position choice hasn't picked a room!");
             return;
         }
-        // TODO: normal flow
+        if (room_internals.hasIn(["speculative_players", player_id])) {
+            clearTimeout(room_internals.getIn(["speculative_players", player_id]));
+        }
+        var ret = registration.set_player_position(player_to_name,
+                _.partial(make_position_choice_timeout, room_id),
+                room_internals, msg.position, player_uuid);
+
+        room_to_details = room_to_details.set(room_id, ret[0]);
+        socket.emit.apply(null, ret[1]);
     });
 
     socket.on("disconnect", function() {
