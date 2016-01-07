@@ -90,6 +90,7 @@ define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", 
             data: JSON.stringify(post_data),
         }).then(function(room_data) {
             Globals.player_uuid = room_data.player_uuid;
+            Globals.room_id = room_id;
             Globals.socket = io();
             Globals.socket.emit("register_socket", {
                 player_uuid: Globals.player_uuid

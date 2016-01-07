@@ -59,7 +59,6 @@ app.post("/register", function(req, res) {
         room_to_details = ret[1];
         player_to_name= ret[2];
     } else {  
-        // TODO: remove this timeout after the player picks a position.
         var ret = registration.register_player_to_room(player_to_room, room_to_details, player_to_name,
                 make_position_choice_timeout, req, res);
         player_to_room = ret[0];
@@ -105,6 +104,10 @@ io.on("connection", function(socket) {
 
         room_to_details = room_to_details.set(room_id, ret[0]);
         socket.emit.apply(null, ret[1]);
+        if (ret[1][0] === "successful_join") {
+            io.to(room_id).emit("new_player_joined", ret[1][1]);
+            socket.join(room_id);
+        }
     });
 
     socket.on("disconnect", function() {

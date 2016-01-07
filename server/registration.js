@@ -118,5 +118,7 @@ exports.set_player_position = function(player_to_name, make_timeout, room_detail
     }
 
     room_details = room_details.setIn(["players", position], player_id);
-    return [room_details, ["successful_join", {}]];
+    return [room_details, ["successful_join", {
+        current_players: make_room_info(room_details.get("players"), player_to_name)
+    }]];
 };

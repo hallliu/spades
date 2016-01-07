@@ -52,15 +52,18 @@ Server response:
     {position: <0, 1, 2, or 3>}
 
 (Server) If position is no longer available, respond with "position_full" message. If the room is now full, respond with
-         "room_full" message. The position_full message will contain the same info as the player listing above.
+         "room_full" message. The position_full message will contain the same info as the player listing above, but omitting
+         the player_uuid field.
 
-         If player has successfully filled the position, respond with "successful_join".
+         If player has successfully filled the position, respond with "successful_join", containing the most up-to-date
+         player listing.
 
-(Server) The server may also send periodic "position_update" messages with the same contents as "position_full"
-         and the player listing. This is a UI hint.
 
 (Client) If there are no further spots available, inform the player, but keep the socket and the player uuid. If there
          are more spots available, redo the choice dialog from above.
+
+(Server) After a player has joined, inform them of future players joining by sending "new_player_joined" messages,
+         again containing the same player listing format.
 
 ----------------------
 Starting a game and bidding:
