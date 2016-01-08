@@ -121,9 +121,9 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
             };
         };
 
-        var calc_deck_pos = function(deck_el, rotation) {
-            var parent_height = deck_el.parent().height();
-            var parent_width = deck_el.parent().width();
+        var calc_deck_pos = function(deck_el, parent, rotation) {
+            var parent_height = parent.height();
+            var parent_width = parent.width();
 
             var wh_diff = deck_el.width() / 2 - deck_el.height() / 2;
 
@@ -177,19 +177,26 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
 
             this.cards.sort(card_sort_cmp);
 
-            this.el = $($("#deck_template").html());
+            this.container_el = $($("#deck_template").html());
+            this.player_info_el = this.container_el.find(".player-info-area");
+            this.el = this.container_el.find(".deck");
 
             this.el.width(Constants.CARD_OFFSET * 12 + Constants.CARD_WIDTH);
             this.el.height(Constants.CARD_HEIGHT);
+
+            this.player_info_el.width(Constants.PLAYER_INFO_WIDTH);
+            this.player_info_el.height(Constants.CARD_HEIGHT);
+            this.container_el.css("max-height", Constants.CARD_HEIGHT + 5);
         };
 
         Deck.prototype.attach = function() {
-            this.el.appendTo("#main-container");
-            this.el.css("position", "absolute");
+            this.container_el.css("position", "absolute");
+            this.container_el.appendTo("#main-container");
             
-            var calculated_position = calc_deck_pos(this.el, this.board_position);
-            this.el.css("top", calculated_position.top);
-            this.el.css("left", calculated_position.left);
+            var calculated_position = calc_deck_pos(this.container_el,
+                    $("#main-container"), this.board_position);
+            this.container_el.css("top", calculated_position.top);
+            this.container_el.css("left", calculated_position.left);
             this.rotate(calculated_position.rotation);
 
             this.cards.forEach(function(card, idx) {
@@ -232,8 +239,10 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
         };
 
         Deck.prototype.rotate = function(angle) {
-            angle = "rotate(" + angle + "deg)";
-            this.el.css("transform", angle);
+            var angle1 = "rotate(" + angle + "deg)";
+            var angle2 = "rotate(-" + angle + "deg)";
+            this.container_el.css("transform", angle1);
+            this.container_el.find(".player-info-area").css("transform", angle2);
         };
 
         Deck.prototype._render = function() {
