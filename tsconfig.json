@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "outDir": "js_out/",
+        "target": "ES5"
+    },
+    "files": [
+        "server/room_info.ts",
+        "server/global_state.ts",
+        "typings/tsd.d.ts",
+        "node_modules/immutable/dist/immutable.d.ts"
+	],
+    "exclude": [
+        "node_modules/"
+    ]
+}
