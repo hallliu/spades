@@ -5,9 +5,6 @@ const Immutable = require("immutable");
 const _ = require("underscore");
 
 const IMap = Immutable.Map;
-/**
- * @param existing_rooms: Immutable.Map - maps room ids to their room structures
- */
 
 const make_room_info = function(player_positions, player_to_name) {
     return player_positions.map(function(v) {

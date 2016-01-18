@@ -11,6 +11,9 @@
     "files": [
         "server/room_info.ts",
         "server/global_state.ts",
+        "server/registration.ts",
+        "server/main.ts",
+        "server/handlers.ts",
         "typings/tsd.d.ts",
         "node_modules/immutable/dist/immutable.d.ts"
 	],

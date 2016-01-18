@@ -49,7 +49,10 @@ Server response:
 (Client) Format the response to provide a coherent choice to the player (use the console for now, maybe UI stuff later?)
 
 (Client) Respond with player's choice. Send a message "position_choice":
-    {position: <0, 1, 2, or 3>}
+    {
+        position: <0, 1, 2, or 3>,
+        room: <string, room id>
+    }
 
 (Server) If position is no longer available, respond with "position_full" message. If the room is now full, respond with
          "room_full" message. The position_full message will contain the same info as the player listing above, but omitting

@@ -98,6 +98,7 @@ define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", 
             var pick_seat_action = function(picked_seat) {
                 Globals.socket.emit("position_choice", {
                     position: picked_seat,
+                    room_id: room_id,
                 });
             };
             SeatPicker.obtain().show(_.mapObject(room_data.current_players, function(info) {
