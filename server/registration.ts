@@ -90,13 +90,12 @@ export function register_player_to_room(req: express.Request, res: express.Respo
     logger.log("info", `Responded to player ${player_uuid} with info for room ${requested_room_id}`);
 }
 
-export function position_choice_handler(player_id: string, position: number): IOMessage[] {
+export function position_choice_handler(room_id: string, player_id: string, position: number): IOMessage[] {
     logger.log("info", `Player ${player_id} chose position ${position}`);
     if (global_state.get_room_of_player(player_id) === null) {
         logger.log("warning", `Player attempted to choose position before room`);
         return [];
     }
-    var room_id = global_state.get_room_of_player(player_id);
     var room_info = global_state.get_room_info(room_id);
 
     global_state.update_room(room_info.clear_speculative_timeout(player_id));

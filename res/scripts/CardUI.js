@@ -1,5 +1,6 @@
 "use strict";
-define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocity, _, Constants, PlayArea) {
+define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManager"],
+       function(Velocity, _, Constants, PlayArea, PlayerInfoManager) {
     const BACK_ID = "3";
 
     var Card = function() {
@@ -178,15 +179,17 @@ define(["velocity", "underscore", "./Constants", "./PlayArea"], function(Velocit
             this.cards.sort(card_sort_cmp);
 
             this.container_el = $($("#deck_template").html());
-            this.player_info_el = this.container_el.find(".player-info-area");
             this.el = this.container_el.find(".deck");
 
             this.el.width(Constants.CARD_OFFSET * 12 + Constants.CARD_WIDTH);
             this.el.height(Constants.CARD_HEIGHT);
 
-            this.player_info_el.width(Constants.PLAYER_INFO_WIDTH);
-            this.player_info_el.height(Constants.CARD_HEIGHT);
             this.container_el.css("max-height", Constants.CARD_HEIGHT + 5);
+
+            var player_info_el = this.container_el.find(".player-info-area");
+            player_info_el.width(Constants.PLAYER_INFO_WIDTH);
+            player_info_el.height(Constants.CARD_HEIGHT);
+            PlayerInfoManager.obtain().register_info_area(position, player_info_el);
         };
 
         Deck.prototype.attach = function() {

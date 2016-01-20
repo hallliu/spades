@@ -18,20 +18,24 @@ define(["Constants", "underscore", "ScoreModel", "UIPosition"],
         /**
          * name_dict is a dict of the form: 
          * 
-         * { team_0: <team 0 name>
-         *   team_1: <team 1 name>
-         *   player_0: <player 0 name>
-         *   player_1: etc.
-         *   etc.
+         * { 
+         *     player_names: {
+         *         0: <name 0>,
+         *         ...
+         *     },
+         *     team_names: {
+         *         0: <name 0>,
+         *         ...
+         *     }
          * }
          */
         ScoringArea.prototype.update_names = function(name_dict) {
-            this.el.find(".team-0-name").html(name_dict.team_0);
-            this.el.find(".team-1-name").html(name_dict.team_1);
-            this.el.find(".player-0").html(name_dict.player_0);
-            this.el.find(".player-1").html(name_dict.player_1);
-            this.el.find(".player-2").html(name_dict.player_2);
-            this.el.find(".player-3").html(name_dict.player_3);
+            this.el.find(".team-0-name").html(name_dict.team_names[0]);
+            this.el.find(".team-1-name").html(name_dict.team_names[0]);
+            this.el.find(".player-0").html(name_dict.player_names[0]);
+            this.el.find(".player-1").html(name_dict.player_names[1]);
+            this.el.find(".player-2").html(name_dict.player_names[2]);
+            this.el.find(".player-3").html(name_dict.player_names[3]);
             UIPosition.fix_scoring_ui();
         };
 

@@ -32,7 +32,7 @@ export function register_handlers(player_id: string, io: SocketIO.Server, socket
     });
 
     socket.on("position_choice", function(msg: PositionChoiceMessage) {
-        var results: IOMessage[] = position_choice_handler(player_id, msg.position);
+        var results: IOMessage[] = position_choice_handler(msg.room_id, player_id, msg.position);
         exec_results(results, io, socket);
         if (results[0].message === "successful_join" || results[1].message === "successful_join") {
             socket.join(msg.room_id);

@@ -33,4 +33,11 @@ define({
     DECK_DIST_FROM_BOARD_EDGE: 8,
 
     PLAYER_INFO_WIDTH: 135,
+
+    POSITION_TO_ID: {
+        "bottom": 0,
+        "left": 1,
+        "top": 2,
+        "right": 3,
+    },
 });

@@ -3,6 +3,7 @@ import socketio = require("socket.io");
 import http = require("http");
 
 import registration = require("./registration");
+import {register_handlers} from "./handlers";
 
 const app = express();
 const http_mod = http.createServer(app);
@@ -26,7 +27,7 @@ app.post("/register", function(req, res) {
 io.on("connection", function(socket) {
     socket.on("register_socket", function(msg: {[key: string]: any}) {
         var player_uuid: string = msg["player_uuid"];
-        // TODO: register handlers for each message
+        register_handlers(player_uuid, io, socket);
     });
 });
 

@@ -51,7 +51,7 @@ Server response:
 (Client) Respond with player's choice. Send a message "position_choice":
     {
         position: <0, 1, 2, or 3>,
-        room: <string, room id>
+        room_id: <string, room id>
     }
 
 (Server) If position is no longer available, respond with "position_full" message. If the room is now full, respond with
@@ -59,7 +59,11 @@ Server response:
          the player_uuid field.
 
          If player has successfully filled the position, respond with "successful_join", containing the most up-to-date
-         player listing.
+         player listing as well as the team names, as so:
+         {
+             current_players: {0: ..., 1: ...},
+             team_names: {0: <team name 0>, 1: <team name 1>}
+         }
 
 
 (Client) If there are no further spots available, inform the player, but keep the socket and the player uuid. If there
