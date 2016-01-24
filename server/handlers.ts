@@ -38,6 +38,12 @@ export function register_handlers(player_id: string, io: SocketIO.Server, socket
             socket.join(msg.room_id);
         } 
     });
+
+    // Join the socket.io room that the player is supposed to be in
+    var room_id = global_state.get_room_of_player(player_id);
+    if (room_id && global_state.get_room_info(room_id).players.includes(player_id)) {
+        socket.join(room_id);
+    }
 }
 
 function exec_results(msgs: IOMessage[], io: SocketIO.Server, socket: SocketIO.Socket) {

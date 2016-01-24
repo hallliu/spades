@@ -123,7 +123,8 @@ export function position_choice_handler(room_id: string, player_id: string, posi
     var message_contents =  {
         current_players: make_room_info(room_info.players.toJS(), (pid: string)=>{
             return global_state.get_player_name(pid);
-        })
+        }),
+        newly_joined_position: position,
     }
 
     return [

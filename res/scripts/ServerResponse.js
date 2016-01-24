@@ -5,17 +5,26 @@ define(["Constants", "underscore", "Globals", "ChatArea", "SeatPicker", "Scoring
 
 var chat_area = ChatArea.obtain();
 
+var _update_names = function(player_names, team_names) {
+    var name_dict = {
+        player_names: player_names,
+        team_names: team_names
+    };
+    ScoringArea.obtain().update_names(name_dict);
+    PlayerInfoManager.obtain().update_names(name_dict);
+};
+
 var handle_successful_join = function(msg) {
     chat_area.push_info_message("Successfully joined room " + Globals.room_id);
-    msg.player_names = _.mapObject(msg.current_players, function(pl) {
-        return pl.name;
-    });
     Globals.player_position = parseInt(_.findKey(msg.current_players, function(pl) {
         return pl.uuid === Globals.player_uuid;
     }));
     PlayerInfoManager.obtain().update_player_position(Globals.player_position);
-    ScoringArea.obtain().update_names(msg);
-    PlayerInfoManager.obtain().update_names(msg);
+    
+    var player_names = _.mapObject(msg.current_players, function(pl) {
+        return pl.name;
+    });
+    _update_names(player_names, undefined);
 };
 
 var handle_position_full = function(msg) {
@@ -30,9 +39,20 @@ var handle_position_full = function(msg) {
     }), pick_seat_action);
 };
 
+var handle_new_player_joined = function(msg) {
+    var new_player_name = msg.current_players[msg.newly_joined_position].name;
+
+    chat_area.push_info_message(new_player_name + " has joined the room!");
+    var player_names = _.mapObject(msg.current_players, function(pl) {
+        return pl.name;
+    });
+    _update_names(player_names, undefined);
+};
+
 var setup_socket = function(socket) {
     socket.on("successful_join", handle_successful_join);
     socket.on("position_full", handle_position_full);
+    socket.on("new_player_joined", handle_new_player_joined);
 };
 
 return {setup_socket: setup_socket};

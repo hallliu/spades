@@ -69,8 +69,14 @@ Server response:
 (Client) If there are no further spots available, inform the player, but keep the socket and the player uuid. If there
          are more spots available, redo the choice dialog from above.
 
-(Server) After a player has joined, inform them of future players joining by sending "new_player_joined" messages,
-         again containing the same player listing format.
+(Server) After a player has joined, inform them of future players joining by sending "new_player_joined" messages:
+         {
+             current_players: {
+                 0: ...,
+                 1: ...,
+             },
+             newly_joined_position: <0, 1, 2, or 3>, the newly joined position
+         }
 
 ----------------------
 Starting a game and bidding:
