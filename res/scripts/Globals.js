@@ -9,6 +9,7 @@ define([], function() {
         socket: null,
         player_uuid: null,
         room_id: null,
+        player_position: null,
     };
 
     return global_variables;

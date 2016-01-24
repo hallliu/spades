@@ -1,7 +1,7 @@
 "use strict";
 
-define(["Constants", "underscore"],
-       function(Constants, _) {
+define(["Constants", "underscore", "Globals"],
+       function(Constants, _, Globals) {
 
 var obtain = function() {
     var obj;
@@ -11,13 +11,23 @@ var obtain = function() {
     };
 
     var PlayerInfoManager = function() {
+        this.position_to_info_el = {};
         this.player_to_info_el = {};
     };
 
     PlayerInfoManager.prototype.register_info_area = function(position, el) {
-        this.player_to_info_el[Constants.POSITION_TO_ID[position]] = el;
+        this.position_to_info_el[position] = el;
     };
 
+    /**
+     * player_position is 0, 1, 2, or 3, depending on what the in-game id of the player is
+     */
+    PlayerInfoManager.prototype.update_player_position = function(player_position) {
+        _.each(this.position_to_info_el, function(el, pos) {
+            var np_id = (Constants.POSITION_TO_ID[pos] + player_position) % 4;
+            this.player_to_info_el[np_id] = el;
+        }, this);
+    };
 
     /**
      * name_dict is a dict of the form: 
@@ -35,7 +45,9 @@ var obtain = function() {
      */
     PlayerInfoManager.prototype.update_names = function(name_dict) {
         _.each(this.player_to_info_el, function(el, id) {
-            el.find(".player-name").html(name_dict.player_names[id]);
+            if (_.has(name_dict.player_names, id)) {
+                el.find(".player-name").html(name_dict.player_names[id]);
+            }
         });
     };
 
@@ -56,4 +68,4 @@ var obtain = function() {
 }();
 
 return {obtain: obtain};
-}
+});

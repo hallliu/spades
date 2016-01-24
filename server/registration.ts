@@ -78,6 +78,7 @@ export function register_player_to_room(req: express.Request, res: express.Respo
     }
     
     var player_uuid = uuid.v1();
+    global_state.add_player_name(player_uuid, req.body["name"]);
     global_state.update_room(requested_room.add_new_speculative_player(player_uuid,
             get_speculation_timeout(requested_room_id, player_uuid)));
     
@@ -124,6 +125,7 @@ export function position_choice_handler(room_id: string, player_id: string, posi
             return global_state.get_player_name(pid);
         })
     }
+
     return [
         {
             message: "successful_join",

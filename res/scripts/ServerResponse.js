@@ -4,15 +4,16 @@ define(["Constants", "underscore", "Globals", "ChatArea", "SeatPicker", "Scoring
        function(Constants, _, Globals, ChatArea, SeatPicker, ScoringArea, PlayerInfoManager) {
 
 var chat_area = ChatArea.obtain();
-var translate_name_message = function(name_message) {
-    return {
-
-    };
-}
 
 var handle_successful_join = function(msg) {
     chat_area.push_info_message("Successfully joined room " + Globals.room_id);
-    msg.player_names = msg.current_players;
+    msg.player_names = _.mapObject(msg.current_players, function(pl) {
+        return pl.name;
+    });
+    Globals.player_position = parseInt(_.findKey(msg.current_players, function(pl) {
+        return pl.uuid === Globals.player_uuid;
+    }));
+    PlayerInfoManager.obtain().update_player_position(Globals.player_position);
     ScoringArea.obtain().update_names(msg);
     PlayerInfoManager.obtain().update_names(msg);
 };
@@ -30,9 +31,9 @@ var handle_position_full = function(msg) {
 };
 
 var setup_socket = function(socket) {
-    
+    socket.on("successful_join", handle_successful_join);
+    socket.on("position_full", handle_position_full);
 };
 
 return {setup_socket: setup_socket};
-
 });

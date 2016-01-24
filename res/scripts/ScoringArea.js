@@ -30,12 +30,26 @@ define(["Constants", "underscore", "ScoreModel", "UIPosition"],
          * }
          */
         ScoringArea.prototype.update_names = function(name_dict) {
-            this.el.find(".team-0-name").html(name_dict.team_names[0]);
-            this.el.find(".team-1-name").html(name_dict.team_names[0]);
-            this.el.find(".player-0").html(name_dict.player_names[0]);
-            this.el.find(".player-1").html(name_dict.player_names[1]);
-            this.el.find(".player-2").html(name_dict.player_names[2]);
-            this.el.find(".player-3").html(name_dict.player_names[3]);
+            var set_team_if_present = _.bind(function(team_idx) {
+                if (_.has(name_dict, "team_names") && _.has(name_dict.team_names, team_idx)) {
+                    this.el.find(".team-" + team_idx + "-name").html(name_dict.team_names[team_idx]);
+                }
+            }, this);
+
+            var set_player_if_present = _.bind(function(player_idx) {
+                if (_.has(name_dict, "player_names") && _.has(name_dict.player_names, player_idx)) {
+                    this.el.find(".player-" + player_idx).html(name_dict.player_names[player_idx]);
+                }
+            }, this);
+
+            _.each([0, 1], function(i) {
+                set_team_if_present(i);
+            });
+
+            _.each([0, 1, 2, 3], function(i) {
+                set_player_if_present(i);
+            });
+
             UIPosition.fix_scoring_ui();
         };
 

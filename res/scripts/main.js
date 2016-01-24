@@ -66,11 +66,15 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "Scoring
     window.all_cards = card_coll;
     window.deal_cards = deal_cards;
     scoring_area.update_names({
-        team_0: "Team 1",
-        team_1: "Team 2",
-        player_0: "playerA",
-        player_1: "playerB",
-        player_2: "playerC",
-        player_3: "playerD",
+        player_names: {
+            0: "playerA",
+            1: "playerB",
+            2: "playerC",
+            3: "playerD",
+        },
+        team_names: {
+            0: "Team 1",
+            1: "Team 2",
+        }
     });
 });

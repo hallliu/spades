@@ -1,7 +1,7 @@
 "use strict";
 
-define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", "SeatPicker"],
-       function(Constants, _, Globals, ChatArea, io, $, SeatPicker) {
+define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", "SeatPicker", "PlayerInfoManager", "ScoringArea", "ServerResponse"],
+       function(Constants, _, Globals, ChatArea, io, $, SeatPicker, PlayerInfoManager, ScoringArea, ServerResponse) {
 
     var chat_area = ChatArea.obtain();
     var is_nonempty_string = function(x) {
@@ -50,11 +50,21 @@ define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", 
         }).then(function(room_data) {
             Globals.player_uuid = room_data.player_uuid;
             Globals.room_id = room_data.room_id;
+
+            Globals.player_position = 0;
+            PlayerInfoManager.obtain().update_player_position(Globals.player_position);
+            var name_dict = {
+                player_names: { 0: Globals.player_name }
+            };
+            PlayerInfoManager.obtain().update_names(name_dict);
+            ScoringArea.obtain().update_names(name_dict);
+
             chat_area.push_info_message(`Success! Your room id is ${Globals.room_id}. Share this with other players.`);
             Globals.socket = io();
             Globals.socket.emit("register_socket", {
                 player_uuid: Globals.player_uuid
             });
+            ServerResponse.setup_socket(Globals.socket);
         }, function(req) {
             chat_area.push_info_message("An unexplainable error happened. See console for details.");
             console.log(req);
@@ -95,6 +105,7 @@ define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", 
             Globals.socket.emit("register_socket", {
                 player_uuid: Globals.player_uuid
             });
+            ServerResponse.setup_socket(Globals.socket);
             var pick_seat_action = function(picked_seat) {
                 Globals.socket.emit("position_choice", {
                     position: picked_seat,
