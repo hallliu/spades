@@ -10,7 +10,7 @@ const logger = new (winston.Logger)({
 });
 
 import RoomInfo = require("./room_info");
-import global_state = require("./global_state");
+import {IGlobalState} from "./global_state";
 import {IOMessage} from "./handlers";
 
 function make_room_info(player_positions: {[key: number]: string},
@@ -31,14 +31,16 @@ function get_new_room_id(does_id_exist: (x: string)=>boolean): string {
     return get_new_room_id(does_id_exist);
 }
 
-function get_speculation_timeout(room_id: string, player_id: string): NodeJS.Timer {
-    return setTimeout(()=>{
+function get_speculation_timeout(global_state: IGlobalState,
+                                 room_id: string, player_id: string): NodeJS.Timer {
+    return setTimeout(() => {
         var room_info = global_state.get_room_info(room_id);
         global_state.update_room(room_info.clear_speculative_timeout(player_id));
     }, 10000);
 }
 
-export function register_new_session(req: express.Request, res: express.Response) {
+export function register_new_session(global_state: IGlobalState,
+                                     req: express.Request, res: express.Response) {
     logger.log("info", "New session requested.");
     var player_uuid = uuid.v1();
     global_state.add_player_name(player_uuid, req.body["name"]);
@@ -58,7 +60,8 @@ export function register_new_session(req: express.Request, res: express.Response
     logger.log("info", `Created new room: ${room_id} for player ${player_uuid}`);
 }
 
-export function register_player_to_room(req: express.Request, res: express.Response) {
+export function register_player_to_room(global_state: IGlobalState,
+                                        req: express.Request, res: express.Response) {
     var requested_room_id: string = req.body["room_id"];
     logger.log("info", `Requesting to join room ${requested_room_id}`);
     if (global_state.get_room_info(requested_room_id) === null) {
@@ -80,7 +83,7 @@ export function register_player_to_room(req: express.Request, res: express.Respo
     var player_uuid = uuid.v1();
     global_state.add_player_name(player_uuid, req.body["name"]);
     global_state.update_room(requested_room.add_new_speculative_player(player_uuid,
-            get_speculation_timeout(requested_room_id, player_uuid)));
+            get_speculation_timeout(global_state, requested_room_id, player_uuid)));
     
     res.json({
         player_uuid: player_uuid,
@@ -91,7 +94,8 @@ export function register_player_to_room(req: express.Request, res: express.Respo
     logger.log("info", `Responded to player ${player_uuid} with info for room ${requested_room_id}`);
 }
 
-export function position_choice_handler(room_id: string, player_id: string, position: number): IOMessage[] {
+export function position_choice_handler(global_state: IGlobalState, room_id: string,
+                                        player_id: string, position: number): IOMessage[] {
     logger.log("info", `Player ${player_id} chose position ${position}`);
     if (global_state.get_room_of_player(player_id) === null) {
         logger.log("warning", `Player attempted to choose position before room`);
@@ -108,7 +112,7 @@ export function position_choice_handler(room_id: string, player_id: string, posi
 
     if (room_info.players.has(position)) {
         global_state.update_room(room_info.add_new_speculative_player(player_id,
-                get_speculation_timeout(room_id, player_id)));
+                get_speculation_timeout(global_state, room_id, player_id)));
         return [{message: "position_full",
             contents: {
                 current_players: make_room_info(room_info.players.toJS(), (pid: string)=>{

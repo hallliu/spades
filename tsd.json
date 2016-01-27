@@ -34,6 +34,12 @@
     },
     "mime/mime.d.ts": {
       "commit": "70bf7e2bfeb0d5b1b651ef3219bcc65c8eec117e"
+    },
+    "sinon/sinon.d.ts": {
+      "commit": "7ce80dafc0df189d61950e80e04548d8304d1538"
+    },
+    "mocha/mocha.d.ts": {
+      "commit": "7ce80dafc0df189d61950e80e04548d8304d1538"
     }
   }
 }

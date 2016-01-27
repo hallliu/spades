@@ -1,8 +1,8 @@
 import socketio = require("socket.io");
 import winston = require("winston");
 
-import global_state = require("./global_state");
 import {position_choice_handler} from "./registration";
+import {IGlobalState} from "./global_state.ts";
 
 interface ChatMessage {
     author: string,
@@ -20,7 +20,8 @@ export interface IOMessage {
     contents: {[key: string]: any}
 }
 
-export function register_handlers(player_id: string, io: SocketIO.Server, socket: SocketIO.Socket) {
+export function register_handlers(global_state: IGlobalState, player_id: string,
+                                  io: SocketIO.Server, socket: SocketIO.Socket) {
     socket.on("chat_message", function(msg: ChatMessage) {
         var current_room = global_state.get_room_of_player(player_id);
         if (current_room === null) {
@@ -32,7 +33,7 @@ export function register_handlers(player_id: string, io: SocketIO.Server, socket
     });
 
     socket.on("position_choice", function(msg: PositionChoiceMessage) {
-        var results: IOMessage[] = position_choice_handler(msg.room_id, player_id, msg.position);
+        var results: IOMessage[] = position_choice_handler(global_state, msg.room_id, player_id, msg.position);
         exec_results(results, io, socket);
         if (results[0].message === "successful_join" || results[1].message === "successful_join") {
             socket.join(msg.room_id);
