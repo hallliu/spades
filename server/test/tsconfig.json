@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "outDir": "js/",
+        "target": "ES5"
+    },
+    "files": [
+        "test_registration.ts",
+        "../../typings/tsd.d.ts",
+        "../../node_modules/immutable/dist/immutable.d.ts"
+	],
+    "exclude": [
+        "node_modules/"
+    ]
+}
