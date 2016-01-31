@@ -34,6 +34,7 @@ function get_new_room_id(does_id_exist: (x: string)=>boolean): string {
 function get_speculation_timeout(global_state: IGlobalState,
                                  room_id: string, player_id: string): NodeJS.Timer {
     return setTimeout(() => {
+        logger.info(`Player ${player_id} timed out joining room ${room_id}`);
         var room_info = global_state.get_room_info(room_id);
         global_state.update_room(room_info.clear_speculative_timeout(player_id));
     }, 10000);
@@ -65,7 +66,7 @@ export function register_player_to_room(global_state: IGlobalState,
     var requested_room_id: string = req.body["room_id"];
     logger.log("info", `Requesting to join room ${requested_room_id}`);
     if (global_state.get_room_info(requested_room_id) === null) {
-        logger.log("warning", `Invalid room ${requested_room_id}`);
+        logger.log("warn", `Invalid room ${requested_room_id}`);
         res.status(404).json({
             error: "Room id specified does not exist",
         });
@@ -73,7 +74,7 @@ export function register_player_to_room(global_state: IGlobalState,
     }
     var requested_room = global_state.get_room_info(requested_room_id);
     if (requested_room.is_full()) {
-        logger.log("warning", `Room ${requested_room_id} is full`);
+        logger.log("warn", `Room ${requested_room_id} is full`);
         res.status(409).json({
             error: "Room is full",
         });
