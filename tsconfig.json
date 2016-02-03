@@ -14,6 +14,7 @@
         "server/registration.ts",
         "server/main.ts",
         "server/handlers.ts",
+        "server/game_state.ts",
         "typings/tsd.d.ts",
         "node_modules/immutable/dist/immutable.d.ts"
 	],
