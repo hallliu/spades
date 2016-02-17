@@ -1,7 +1,7 @@
 import Immutable = require("immutable");
 import _ = require("underscore");
 
-interface HandStateMembers {
+export interface HandStateMembers {
     cards?: Immutable.Map<number, Immutable.Set<number>>;
     cards_in_play?: Immutable.Map<number, number>; 
     bids?: Immutable.Map<number, number>;
@@ -69,9 +69,12 @@ export class HandState {
         if (!init) {
             return;
         }
-        if (!next_player) {
-            next_player = _.random(4);
+        if (next_player === undefined) {
+            this._next_player = _.random(3);
+        } else {
+            this._next_player = next_player;
         }
+
         var all_cards: number[] = _.range(52);
         _.shuffle(all_cards);
         this._cards = Immutable.Map<number, Immutable.Set<number>>().withMutations(cards => {
