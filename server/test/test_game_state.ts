@@ -26,6 +26,18 @@ function make_card_set(c1: number[], c2: number[], c3: number[], c4: number[]): 
     };
 }
 
+function assert_card_played_by_player(state: HS.HandState, player: number, card: number) {
+    assert(state.cards_in_play.get(player) === card || state.cards_in_play.size === 0);
+    assert(!state.cards.get(player).contains(card))
+}
+
+function assert_player_won(old_state: HS.HandState, state: HS.HandState, player: number) {
+    assert.equal(state.cards_in_play.size, 0);
+    assert.equal(state.leading_suit, null);
+    assert.equal(state.next_player, player);
+    assert.equal(state.tricks.get(player), old_state.tricks.get(player) + 1);
+}
+
 describe("Game state transitions", function() {
     it("State initialization", function() {
         var state = new HS.HandState(default_factory);
@@ -73,5 +85,98 @@ describe("Game state transitions", function() {
         var {new_state, notes} = state.play_card(0, 1);
         assert.equal(new_state, null);
         assert.equal(notes, HS.HandStateNote.ERR_SPADES_UNBROKEN);
+    });
+
+    it("Lead spades after broken", function() {
+        var modifications = make_card_set([1, 46], [34, 12], [44, 11], [17, 23]);
+        modifications.spades_broken = true;
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 0), modifications);
+        var {new_state, notes} = state.play_card(0, 1);
+        assert_card_played_by_player(new_state, 0, 1);
+        assert.equal(notes, null);
+    });
+
+    it("Lead ordinary card", function() {
+        var modifications = make_card_set([19, 46], [34, 12], [44, 11], [17, 23]);
+        modifications.spades_broken = true;
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 0), modifications);
+        var {new_state, notes} = state.play_card(0, 19);
+        assert_card_played_by_player(new_state, 0, 19);
+        assert.equal(notes, null);
+    });
+
+    it("Play card in-suit", function() {
+        var modifications = make_card_set([46], [34, 22], [44, 11], [17, 23]);
+        modifications.leading_suit = 1;
+        modifications.cards_in_play = Immutable.Map<number, number>([[0, 19]]);
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 1), modifications);
+        var {new_state, notes} = state.play_card(1, 22);
+        assert_card_played_by_player(new_state, 1, 22);
+        assert.equal(notes, null);
+    });
+
+    it("Play card out-of-suit for legit reasons", function() {
+        var modifications = make_card_set([46], [34, 33], [44, 11], [17, 23]);
+        modifications.leading_suit = 1;
+        modifications.cards_in_play = Immutable.Map<number, number>([[0, 19]]);
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 1), modifications);
+        var {new_state, notes} = state.play_card(1, 33);
+        assert_card_played_by_player(new_state, 1, 33);
+        assert.equal(notes, null);
+    });
+
+    it("Break spades", function() {
+        var modifications = make_card_set([46], [34, 3], [44, 11], [17, 23]);
+        modifications.leading_suit = 1;
+        modifications.cards_in_play = Immutable.Map<number, number>([[0, 19]]);
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 1), modifications);
+        var {new_state, notes} = state.play_card(1, 3);
+        assert_card_played_by_player(new_state, 1, 3);
+        assert(new_state.spades_broken && !state.spades_broken);
+        assert.equal(notes, null);
+    });
+
+    it("Finish round -- all in-suit", function() {
+        var modifications = make_card_set([46], [34], [44], [17, 23]);
+        modifications.leading_suit = 1;
+        modifications.cards_in_play = Immutable.Map<number, number>([[0, 19], [1, 20], [2, 25]]);
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 3), modifications);
+        var {new_state, notes} = state.play_card(3, 23);
+        assert_card_played_by_player(new_state, 3, 23);
+        assert_player_won(state, new_state, 2);
+        assert.equal(notes, HS.HandStateNote.NEXT_ROUND);
+    });
+
+    it("Finish round -- some out-of-suit", function() {
+        var modifications = make_card_set([46], [34], [44], [17, 23]);
+        modifications.leading_suit = 1;
+        modifications.cards_in_play = Immutable.Map<number, number>([[0, 19], [1, 40], [2, 45]]);
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 3), modifications);
+        var {new_state, notes} = state.play_card(3, 23);
+        assert_card_played_by_player(new_state, 3, 23);
+        assert_player_won(state, new_state, 3);
+        assert.equal(notes, HS.HandStateNote.NEXT_ROUND);
+    });
+
+    it("Finish round -- with trumps", function() {
+        var modifications = make_card_set([46], [34], [44], [17, 23]);
+        modifications.leading_suit = 1;
+        modifications.cards_in_play = Immutable.Map<number, number>([[0, 19], [1, 9], [2, 25]]);
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 3), modifications);
+        var {new_state, notes} = state.play_card(3, 23);
+        assert_card_played_by_player(new_state, 3, 23);
+        assert_player_won(state, new_state, 1);
+        assert.equal(notes, HS.HandStateNote.NEXT_ROUND);
+    });
+
+    it("Finish round -- leading trumps", function() {
+        var modifications = make_card_set([46], [34], [44], [17, 23]);
+        modifications.leading_suit = 0;
+        modifications.cards_in_play = Immutable.Map<number, number>([[0, 9], [1, 8], [2, 25]]);
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 3), modifications);
+        var {new_state, notes} = state.play_card(3, 23);
+        assert_card_played_by_player(new_state, 3, 23);
+        assert_player_won(state, new_state, 0);
+        assert.equal(notes, HS.HandStateNote.NEXT_ROUND);
     });
 });

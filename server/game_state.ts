@@ -123,9 +123,12 @@ export class HandState {
         this._cards_in_play = modifications.cards_in_play || other.cards_in_play;
         this._bids = modifications.bids || other.bids;
         this._tricks = modifications.tricks || other.tricks;
-        this._next_player = modifications.next_player || other.next_player;
-        this._leading_suit = modifications.leading_suit || other.leading_suit;
-        this._spades_broken = modifications.spades_broken || other._spades_broken;
+        this._next_player = modifications.next_player === undefined ?
+                 other.next_player : modifications.next_player;
+        this._leading_suit = modifications.leading_suit === undefined ?
+                 other.leading_suit : modifications.leading_suit;
+        this._spades_broken = modifications.spades_broken === undefined ?
+                 other.spades_broken : modifications.spades_broken;
         return this;
     }
 
@@ -166,7 +169,8 @@ export class HandState {
             modifications.spades_broken = true;
         }
 
-        modifications.cards = this._cards.deleteIn([player, card]);
+        modifications.cards = this._cards.set(player, 
+                this._cards.get(player).delete(card));
         modifications.cards_in_play = this._cards_in_play.set(player, card);
         modifications.next_player = (this._next_player + 1) % 4;
         return {new_state: this.factory.get().copy(this, modifications), notes: null};
@@ -179,7 +183,8 @@ export class HandState {
             modifications.spades_broken = true;
         }
 
-        modifications.cards = this._cards.deleteIn([player, card]);
+        modifications.cards = this._cards.set(player, 
+                this._cards.get(player).delete(card));
         modifications.cards_in_play = this._cards_in_play.clear();
         modifications.leading_suit = null;
 
