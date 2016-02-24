@@ -2,10 +2,10 @@
 
 import assert = require("assert");
 import mocha = require("mocha");
-import * as HS from "../game_state";
 import _ = require("underscore");
 import Immutable = require("immutable");
 
+import * as HS from "../hand_state";
 class SampleHandStateFactory implements HS.HandStateFactory {
     get(next_player = 0): HS.HandState {
         return new HS.HandState(this, next_player, false);

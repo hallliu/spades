@@ -17,12 +17,15 @@ export interface IGlobalState {
     add_player_name(player_id: string, name: string): boolean;
     change_player_name(player_id: string, name: string): boolean;
     put_player_in_room(player_id: string, room_id: string): boolean;
+    associate_player_with_socket(player_id: string, room_id: string): boolean;
+    get_socket_id_mapping(): Immutable.Map<string, string>;
 }
 
 class GlobalStateImpl implements IGlobalState {
     private room_registry: {[key: string]: RoomInfo};
     private player_to_name: Immutable.Map<string, string>;
     private player_to_room_id: Immutable.Map<string, string>;
+    private player_to_socket_id: Immutable.Map<string, string>;
 
     constructor() {
         this.room_registry = {};
@@ -90,6 +93,20 @@ class GlobalStateImpl implements IGlobalState {
         }
         this.player_to_room_id = this.player_to_room_id.set(player_id, room_id);
         return true;
+    }
+
+    associate_player_with_socket(player_id: string, socket_id: string): boolean {
+        if (this.player_to_socket_id.has(player_id)) {
+            logger.log("warning", `Player ${player_id} is associated to socket ${
+                       this.player_to_socket_id.get(player_id)} already`);
+            return false;                       
+        }
+        this.player_to_socket_id = this.player_to_socket_id.set(player_id, socket_id);
+        return true;
+    }
+
+    get_socket_id_mapping(): Immutable.Map<string, string>{
+        return this.player_to_socket_id;
     }
 }
 

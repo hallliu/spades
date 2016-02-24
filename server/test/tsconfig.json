@@ -10,7 +10,7 @@
     },
     "files": [
         "test_registration.ts",
-        "test_game_state.ts",
+        "test_hand_state.ts",
         "../../typings/tsd.d.ts",
         "../../node_modules/immutable/dist/immutable.d.ts"
 	],

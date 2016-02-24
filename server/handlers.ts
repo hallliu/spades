@@ -2,7 +2,8 @@ import socketio = require("socket.io");
 import winston = require("winston");
 
 import {position_choice_handler} from "./registration";
-import {IGlobalState} from "./global_state.ts";
+import {IGlobalState} from "./global_state";
+import {create_new_hand} from "./game_driver";
 
 interface ChatMessage {
     author: string,
@@ -38,13 +39,21 @@ export function register_handlers(global_state: IGlobalState, player_id: string,
         if (results[0].message === "successful_join" || results[1].message === "successful_join") {
             socket.join(msg.room_id);
         } 
+        if (global_state.get_room_info(msg.room_id).players.size === 4) {
+            let {hand, msgs} = create_new_hand(global_state.get_room_info(msg.room_id),
+                                                   global_state.get_socket_id_mapping(), true);
+            exec_results(msgs, io, socket);
+        }
     });
 
-    // Join the socket.io room that the player is supposed to be in
+    // Join the socket.io room that the player is supposed to be in, if player was the first player
     var room_id = global_state.get_room_of_player(player_id);
     if (room_id && global_state.get_room_info(room_id).players.includes(player_id)) {
         socket.join(room_id);
     }
+
+    // Register the socket id
+    global_state.associate_player_with_socket(player_id, socket.id);
 }
 
 function exec_results(msgs: IOMessage[], io: SocketIO.Server, socket: SocketIO.Socket) {

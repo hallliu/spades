@@ -5,12 +5,16 @@ interface RoomInfoMembers {
     speculative_players?: Immutable.Map<string, NodeJS.Timer>;
     players?: Immutable.Map<number, string>;
     teams?: Immutable.Map<number, string>;
+    scores?: Immutable.List<number>;
+    next_player?: number;
 }
     
 class RoomInfo {
     private _speculative_players: Immutable.Map<string, NodeJS.Timer>;
     private _players: Immutable.Map<number, string>;
     private _teams: Immutable.Map<number, string>;
+    private _scores: Immutable.List<number>;
+    private _next_player: number;
 
     id: string;
     last_active: number;
@@ -21,6 +25,8 @@ class RoomInfo {
             this._speculative_players = Immutable.Map<string, NodeJS.Timer>();
             this._players = Immutable.Map<number, string>();
             this._teams = Immutable.Map<number, string>();
+            this._scores = Immutable.List<number>([0, 0]);
+            this._next_player = _.random(3);
         }
         this.last_active = new Date().getTime();
     }
@@ -35,6 +41,14 @@ class RoomInfo {
 
     get players(): Immutable.Map<number, string> {
         return this._players;
+    }
+
+    get scores(): Immutable.List<number> {
+        return this._scores;
+    }
+
+    get next_player(): number {
+        return this._next_player;
     }
 
     add_player(position: number, player_id: string): RoomInfo {
@@ -62,6 +76,9 @@ class RoomInfo {
         this._speculative_players = modifications.speculative_players || other.speculative_players;
         this._players = modifications.players || other.players;
         this._teams = modifications.teams || other.teams;
+        this._scores = modifications.scores || other.scores;
+        this._next_player = modifications.next_player !== undefined ?
+                modifications.next_player : other.next_player;
         return this;
     }
 
