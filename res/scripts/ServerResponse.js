@@ -1,7 +1,7 @@
 "use strict";
 
-define(["Constants", "underscore", "Globals", "ChatArea", "SeatPicker", "ScoringArea", "PlayerInfoManager"],
-       function(Constants, _, Globals, ChatArea, SeatPicker, ScoringArea, PlayerInfoManager) {
+define(["Constants", "underscore", "Globals", "ChatArea", "SeatPicker", "ScoringArea", "PlayerInfoManager", "ScoreModel", "CardUI"],
+       function(Constants, _, Globals, ChatArea, SeatPicker, ScoringArea, PlayerInfoManager, ScoreModel, CardUI) {
 
 var chat_area = ChatArea.obtain();
 
@@ -49,10 +49,26 @@ var handle_new_player_joined = function(msg) {
     _update_names(player_names, undefined);
 };
 
+var handle_new_game = function(msg) {
+    ScoreModel.obtain().clear_scores();
+    var this_player_cards = _.map(msg.cards, function(card_id) {
+        return new CardUI.Card(card_id);
+    });
+    var other_player_cards = _.map(_.range(3), function() {
+        return _.map(_.range(13), function() {
+            // Initialize all other cards to 0. Change when necessary.
+            return new CardUI.Card(0);
+        });
+    });
+    // TODO: hook into existing decks
+    var id_to_position = _.invert(Constants.POSITION_TO_ID);
+};
+
 var setup_socket = function(socket) {
     socket.on("successful_join", handle_successful_join);
     socket.on("position_full", handle_position_full);
     socket.on("new_player_joined", handle_new_player_joined);
+    socket.on("start_game", handle_new_game);
 };
 
 return {setup_socket: setup_socket};

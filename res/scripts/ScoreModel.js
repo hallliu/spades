@@ -55,6 +55,15 @@ define(["./Constants", "underscore"], function(Constants, _) {
             this.update_listeners(function(l) {l.on_scores_updated();});
         };
 
+        ScoreModel.prototype.clear_scores = function() {
+            this.cumulative_scores = {
+                team_0: 0,
+                team_1: 0,
+            };
+            this.score_rows = [];
+            this.update_listeners(function(l) {l.on_scores_cleared();});
+        };
+
         ScoreModel.prototype.update_listeners = function(listener_fn) {
             this.listeners.forEach(function(listener) {
                 listener_fn(listener);

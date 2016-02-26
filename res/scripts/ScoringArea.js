@@ -66,6 +66,10 @@ define(["Constants", "underscore", "ScoreModel", "UIPosition"],
             latest_score_elem.html(this.score_template(latest_score_row));
         };
 
+        ScoringArea.prototype.on_scores_cleared = function() {
+            this.el.find("tbody").empty();
+        };
+
         var obtain = function() {
             scoring_area_singleton = scoring_area_singleton || new ScoringArea();
             return scoring_area_singleton;

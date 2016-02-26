@@ -11,7 +11,7 @@ export interface HandStateMembers {
     spades_broken?: boolean;
 }
 
-export enum HandStateNote{
+export enum HandStateNote {
     ERR_BAD_ORDER,
     ERR_OTHER,
     ERR_NO_SUCH_CARD,
