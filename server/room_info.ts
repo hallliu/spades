@@ -1,5 +1,6 @@
 // <reference path="node_modules/immutable/dist/immutable.d.ts" />
 import Immutable = require("immutable");
+import _ = require("underscore");
 
 interface RoomInfoMembers {
     speculative_players?: Immutable.Map<string, NodeJS.Timer>;

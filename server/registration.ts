@@ -102,9 +102,9 @@ export function position_choice_handler(global_state: IGlobalState, room_id: str
         logger.log("warning", `Player attempted to choose position before room`);
         return [];
     }
-    var room_info = global_state.get_room_info(room_id);
+    var room_info = global_state.get_room_info(room_id).clear_speculative_timeout(player_id);
 
-    global_state.update_room(room_info.clear_speculative_timeout(player_id));
+    global_state.update_room(room_info);
 
     if (room_info.players.size >= 4) {
         return [{message: "room_full",

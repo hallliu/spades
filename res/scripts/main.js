@@ -51,8 +51,6 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "Scoring
         });
     };
 
-    play_area.set_suit("hearts");
-
     var scoring_area = ScoringArea.obtain();
     var score_model = ScoreModel.obtain();
 

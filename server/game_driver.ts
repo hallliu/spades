@@ -7,7 +7,7 @@ import {IOMessage} from "./handlers";
 
 class DefaultFactory implements HandStateFactory {
     get(next_player = 0): HandState {
-        return new HandState(this, next_player, false);
+        return new HandState(this, next_player, true);
     }
     recycle(hs: HandState) {}
 }

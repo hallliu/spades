@@ -5,6 +5,10 @@ define(["Constants", "underscore", "Globals", "ChatArea", "SeatPicker", "Scoring
 
 var chat_area = ChatArea.obtain();
 
+var canonical_pos_to_board_pos = function(canonical_pos) {
+    return (canonical_pos - Globals.player_position + 4) % 4;
+};
+
 var _update_names = function(player_names, team_names) {
     var name_dict = {
         player_names: player_names,
@@ -52,16 +56,24 @@ var handle_new_player_joined = function(msg) {
 var handle_new_game = function(msg) {
     ScoreModel.obtain().clear_scores();
     var this_player_cards = _.map(msg.cards, function(card_id) {
-        return new CardUI.Card(card_id);
+        return new CardUI.Card(card_id).flip(true);
     });
     var other_player_cards = _.map(_.range(3), function() {
         return _.map(_.range(13), function() {
             // Initialize all other cards to 0. Change when necessary.
-            return new CardUI.Card(0);
+            return new CardUI.Card(0).flip(true);
         });
     });
-    // TODO: hook into existing decks
-    var id_to_position = _.invert(Constants.POSITION_TO_ID);
+
+    var bottom_deck = _.find(window.decks, function(d) {return d.board_position === "bottom";});
+    bottom_deck.initialize_with_cards(this_player_cards)
+            .then(function() {
+                bottom_deck.flip_all_cards();
+            });
+    var other_decks = _.filter(window.decks, function(d) {return d.board_position !== "bottom";});
+    _.each(other_decks, function(deck, idx) {
+        deck.initialize_with_cards(other_player_cards[idx]);
+    });
 };
 
 var setup_socket = function(socket) {

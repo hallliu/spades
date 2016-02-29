@@ -31,6 +31,7 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
                 this.el.find(".card").velocity({"rotateY": this.flipped ? "0deg" : "180deg"});
             }
             this.flipped = !this.flipped;
+            return this;
         };
 
         Card.prototype.attach_to_pile = function(pile_offset) {

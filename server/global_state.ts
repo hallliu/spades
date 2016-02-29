@@ -31,6 +31,7 @@ class GlobalStateImpl implements IGlobalState {
         this.room_registry = {};
         this.player_to_name = Immutable.Map<string, string>();
         this.player_to_room_id = Immutable.Map<string, string>();
+        this.player_to_socket_id = Immutable.Map<string, string>();
     }
 
     get_room_info(room_id: string): RoomInfo {

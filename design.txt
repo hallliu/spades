@@ -91,7 +91,7 @@ Starting a game and bidding:
 
 (Server) Determine who the first to bid is, and send out a "bid_round" message:
     {
-        bidding_user: <player uuid>
+        bidding_user: <player position>
     }
 
 (Client) If the uuid matches own uuid, prompt the user to make a bid. When the bid is made, send a "make_bid" message:
@@ -101,7 +101,7 @@ Starting a game and bidding:
 
 (Server): If the bid is valid (i.e. some integer between 0 and 13, inclusive), broadcast a "user_bid" message:
     {
-        bidding_user: <player uuid>,
+        bidding_user: <player position>,
         bid: <integer>
     }
           then immediately go back to the bid_round stage.
