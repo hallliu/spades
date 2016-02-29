@@ -19,6 +19,7 @@ var _update_names = function(player_names, team_names) {
 };
 
 var handle_successful_join = function(msg) {
+    console.log(msg);
     chat_area.push_info_message("Successfully joined room " + Globals.room_id);
     Globals.player_position = parseInt(_.findKey(msg.current_players, function(pl) {
         return pl.uuid === Globals.player_uuid;
@@ -32,6 +33,7 @@ var handle_successful_join = function(msg) {
 };
 
 var handle_position_full = function(msg) {
+    console.log(msg);
     var pick_seat_action = function(picked_seat) {
         Globals.socket.emit("position_choice", {
             position: picked_seat,
@@ -44,6 +46,7 @@ var handle_position_full = function(msg) {
 };
 
 var handle_new_player_joined = function(msg) {
+    console.log("new_player_joined: " + msg);
     var new_player_name = msg.current_players[msg.newly_joined_position].name;
 
     chat_area.push_info_message(new_player_name + " has joined the room!");
@@ -54,6 +57,7 @@ var handle_new_player_joined = function(msg) {
 };
 
 var handle_new_game = function(msg) {
+    console.log("new_game:"  + msg);
     ScoreModel.obtain().clear_scores();
     var this_player_cards = _.map(msg.cards, function(card_id) {
         return new CardUI.Card(card_id).flip(true);

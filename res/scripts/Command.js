@@ -8,6 +8,17 @@ define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", 
         return (_.isString(x) && x.length > 0) 
     }
 
+    var process_autodebug = function(position, room) {
+        Globals.autodebug = true;
+        Globals.player_name = position.toString();
+        Globals.player_position = parseInt(position);
+        if (room === undefined) {
+            process_newroom();
+        } else {
+            process_joinroom(room);
+        }
+    };
+
     var process_name = function(name) {
         if (!is_nonempty_string(name)) {
             chat_area.push_info_message("Name must be of nonzero length");
@@ -112,6 +123,10 @@ define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", 
                     room_id: room_id,
                 });
             };
+            if (Globals.autodebug) {
+                pick_seat_action(Globals.player_position);
+                return;
+            }
             SeatPicker.obtain().show(_.mapObject(room_data.current_players, function(info) {
                 return info.name;
             }), pick_seat_action);
@@ -135,6 +150,7 @@ define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", 
         "name": process_name,
         "newroom": process_newroom,
         "joinroom": process_joinroom,
+        "d": process_autodebug,
     };
 
     var command_text_processor = function(text) {

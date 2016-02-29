@@ -10,6 +10,7 @@ define([], function() {
         player_uuid: null,
         room_id: null,
         player_position: null,
+        autodebug: false, // Set to true for automatic reply to server messages.
     };
 
     return global_variables;
