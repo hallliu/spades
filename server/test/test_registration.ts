@@ -20,6 +20,8 @@ interface IGlobalStateMock {
     add_player_name: Sinon.SinonStub;
     change_player_name: Sinon.SinonStub;
     put_player_in_room: Sinon.SinonStub;
+    associate_player_with_socket: Sinon.SinonStub;
+    get_socket_id_mapping: Sinon.SinonStub;
 }
 
 class GlobalStateMock implements IGlobalState, IGlobalStateMock {
@@ -31,6 +33,8 @@ class GlobalStateMock implements IGlobalState, IGlobalStateMock {
     add_player_name = sinon.stub();
     change_player_name = sinon.stub();
     put_player_in_room = sinon.stub();
+    associate_player_with_socket = sinon.stub();
+    get_socket_id_mapping = sinon.stub();
 }
 
 function make_res_mock(): express.Response {

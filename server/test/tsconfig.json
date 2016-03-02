@@ -11,6 +11,7 @@
     "files": [
         "test_registration.ts",
         "test_hand_state.ts",
+        "test_game_driver.ts",
         "../../typings/tsd.d.ts",
         "../../node_modules/immutable/dist/immutable.d.ts"
 	],

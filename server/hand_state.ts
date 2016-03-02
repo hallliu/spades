@@ -75,7 +75,7 @@ export class HandState {
             this._next_player = next_player;
         }
 
-        var all_cards: number[] = _.shuffle(_.range(52));
+        var all_cards: number[] = <number[]> _.shuffle(_.range(52));
         this._cards = Immutable.Map<number, Immutable.Set<number>>().withMutations(cards => {
             for (var i: number = 0; i < 4; i++) {
                 cards.set(i, Immutable.Set(all_cards.slice(i * 13, (i + 1) * 13)));
