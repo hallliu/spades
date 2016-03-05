@@ -26,5 +26,42 @@ export function create_new_hand(room_info: RoomInfo, player_to_socket: Immutable
             }
         };
     });
+    msgs.push({
+        room: room_info.id,
+        message: "bid_round",
+        contents: {
+            bidding_user: hand.next_player
+        }
+    });
     return {hand: hand, msgs: msgs};
+}
+
+export function handle_player_bid(room_info: RoomInfo, player_id: string,
+                                  hand: HandState, bid_value: number):
+        {hand: HandState, msgs: IOMessage[]} {
+    let player_position: number = room_info.players.findEntry((id: string) => {return id === player_id})[0];
+    let {new_state, fail_reason} = hand.make_bid(player_position, bid_value);
+    
+    let new_hand = new_state === null ? hand : new_state;
+    let msgs: IOMessage[] = []
+    if (new_state === null) {
+        msgs.push({
+            message: "invalid_bid",
+            contents: {
+                reason: fail_reason
+            }
+        });
+    } else {
+        msgs.push({
+            room: room_info.id,
+            message: "user_bid",
+            contents: {
+                bidding_user: player_position,
+                bid: bid_value
+            }
+        });
+    }
+
+    // TODO: detect when all players have bid
+    return {hand: new_hand, msgs: msgs};
 }

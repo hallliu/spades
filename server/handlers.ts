@@ -3,7 +3,13 @@ import winston = require("winston");
 
 import {position_choice_handler} from "./registration";
 import {IGlobalState} from "./global_state";
-import {create_new_hand} from "./game_driver";
+import {create_new_hand, handle_player_bid} from "./game_driver";
+
+const logger = new (winston.Logger)({
+    transports: [
+        new winston.transports.Console(),
+    ],
+});
 
 interface ChatMessage {
     author: string,
@@ -13,6 +19,10 @@ interface ChatMessage {
 interface PositionChoiceMessage {
     room_id: string,
     position: number
+}
+
+interface MakeBidMessage {
+    bid: number
 }
 
 export interface IOMessage {
@@ -42,8 +52,25 @@ export function register_handlers(global_state: IGlobalState, player_id: string,
         if (global_state.get_room_info(msg.room_id).players.size === 4) {
             let {hand, msgs} = create_new_hand(global_state.get_room_info(msg.room_id),
                                                    global_state.get_socket_id_mapping(), true);
+            global_state.set_hand_for_room(msg.room_id, hand);
             exec_results(msgs, io, socket);
         }
+    });
+
+    socket.on("make_bid", function(msg: MakeBidMessage) {
+        let room_id = global_state.get_room_of_player(player_id);
+        if (room_id == null) {
+            logger.log("error", `Player ${player_id} is not associated to a room`);
+            return;
+        }
+        let curr_hand = global_state.get_hand_for_room(room_id);
+        if (curr_hand === null) {
+            logger.log("error", `Room ${room_id} has no active hand ongoing`);
+            return;
+        }
+        let room_info = global_state.get_room_info(room_id);
+        let {hand, msgs} = handle_player_bid(room_info, player_id, curr_hand, msg.bid);
+        exec_results(msgs, io, socket);
     });
 
     // Join the socket.io room that the player is supposed to be in, if player was the first player

@@ -2,6 +2,7 @@ import Immutable = require("immutable");
 import winston = require("winston");
 
 import RoomInfo = require("./room_info");
+import {HandState} from "./hand_state";
 const logger = new (winston.Logger)({
     transports: [
         new winston.transports.Console(),
@@ -19,16 +20,20 @@ export interface IGlobalState {
     put_player_in_room(player_id: string, room_id: string): boolean;
     associate_player_with_socket(player_id: string, room_id: string): boolean;
     get_socket_id_mapping(): Immutable.Map<string, string>;
+    set_hand_for_room(room_id: string, hand: HandState): boolean;
+    get_hand_for_room(room_id: string): HandState;
 }
 
 class GlobalStateImpl implements IGlobalState {
     private room_registry: {[key: string]: RoomInfo};
+    private hand_registry: {[key: string]: HandState};
     private player_to_name: Immutable.Map<string, string>;
     private player_to_room_id: Immutable.Map<string, string>;
     private player_to_socket_id: Immutable.Map<string, string>;
 
     constructor() {
         this.room_registry = {};
+        this.hand_registry = {};
         this.player_to_name = Immutable.Map<string, string>();
         this.player_to_room_id = Immutable.Map<string, string>();
         this.player_to_socket_id = Immutable.Map<string, string>();
@@ -108,6 +113,19 @@ class GlobalStateImpl implements IGlobalState {
 
     get_socket_id_mapping(): Immutable.Map<string, string>{
         return this.player_to_socket_id;
+    }
+
+    set_hand_for_room(room_id: string, hand: HandState): boolean {
+        this.hand_registry[room_id] = hand;
+        return true;
+    }
+
+    get_hand_for_room(room_id: string): HandState {
+        if (!room_id) {
+            logger.log("error", "Falsy room id for get_hand_for_room");
+            return null;
+        }
+        return this.hand_registry[room_id];
     }
 }
 

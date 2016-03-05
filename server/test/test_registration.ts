@@ -22,6 +22,8 @@ interface IGlobalStateMock {
     put_player_in_room: Sinon.SinonStub;
     associate_player_with_socket: Sinon.SinonStub;
     get_socket_id_mapping: Sinon.SinonStub;
+    set_hand_for_room: Sinon.SinonStub;
+    get_hand_for_room: Sinon.SinonStub;
 }
 
 class GlobalStateMock implements IGlobalState, IGlobalStateMock {
@@ -35,6 +37,8 @@ class GlobalStateMock implements IGlobalState, IGlobalStateMock {
     put_player_in_room = sinon.stub();
     associate_player_with_socket = sinon.stub();
     get_socket_id_mapping = sinon.stub();
+    set_hand_for_room = sinon.stub();
+    get_hand_for_room = sinon.stub();
 }
 
 function make_res_mock(): express.Response {

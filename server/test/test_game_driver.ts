@@ -19,11 +19,15 @@ describe("Game driver functionality testing", function() {
         let player_to_socket = Immutable.Map<string, string>(_.zip(player_ids, socket_ids));
         
         let {hand, msgs} = create_new_hand(room_info, player_to_socket, true);
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 4; i++) {
             let msg = msgs[i];
             assert.equal(socket_ids[i], msg.room);
             assert.equal(msg.message, "start_game");
             assert.equal(msg.contents["cards"].length, 13);
         }
+        let bid_msg = msgs[4];
+        assert.equal(bid_msg.room, room_info.id);
+        assert.equal(bid_msg.message, "bid_round");
+        assert.equal(bid_msg.contents["bidding_user"], room_info.next_player);
     });
 });

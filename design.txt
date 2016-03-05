@@ -94,7 +94,7 @@ Starting a game and bidding:
         bidding_user: <player position>
     }
 
-(Client) If the uuid matches own uuid, prompt the user to make a bid. When the bid is made, send a "make_bid" message:
+(Client) If the position matches ones own, prompt the user to make a bid. When the bid is made, send a "make_bid" message:
     {
         bid: <integer>
     }

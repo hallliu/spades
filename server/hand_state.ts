@@ -193,4 +193,29 @@ export class HandState {
 
         return {new_state: this.factory.get().copy(this, modifications), notes: HandStateNote.NEXT_ROUND};
     }
+
+    make_bid(player_position: number, bid_value: number): {new_state: HandState, fail_reason: string} {
+        if (this.bids.has(player_position)) {
+            return {
+                new_state: null,
+                fail_reason: "You have already bid"
+            };
+        }
+
+        if (player_position != this.next_player) {
+            return {
+                new_state: null,
+                fail_reason: "It's not your turn to bid"
+            };
+        }
+
+        var modifications: HandStateMembers = {
+            bids: this.bids.set(player_position, bid_value),
+            next_player: (this.next_player + 1) % 4,
+        };
+        return {
+            new_state: this.factory.get().copy(this, modifications),
+            fail_reason: null
+        };
+    }
 }
