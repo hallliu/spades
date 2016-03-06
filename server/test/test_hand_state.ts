@@ -179,4 +179,38 @@ describe("Game state transitions", function() {
         assert_player_won(state, new_state, 0);
         assert.equal(notes, HS.HandStateNote.NEXT_ROUND);
     });
+
+    it("Proper bidding", function() {
+        let modifications = {
+            next_player: 2,
+            bids: Immutable.Map<number, number>([[0, 2], [1, 3]]),
+        };
+        let state = default_factory.get().copy(new HS.HandState(default_factory, 3), modifications);
+        let {new_state, fail_reason} = state.make_bid(2, 5);
+        assert.equal(fail_reason, null);
+        assert.equal(new_state.bids.get(2), 5);
+        assert.equal(new_state.next_player, 3);
+    });
+
+    it("Bidding out of turn", function() {
+        let modifications = {
+            next_player: 2,
+            bids: Immutable.Map<number, number>([[0, 2], [1, 3]]),
+        };
+        let state = default_factory.get().copy(new HS.HandState(default_factory, 3), modifications);
+        let {new_state, fail_reason} = state.make_bid(3, 5);
+        assert.notEqual(fail_reason.length, 0);
+        assert.equal(new_state, null)
+    });
+
+    it("Bidding again", function() {
+        let modifications = {
+            next_player: 2,
+            bids: Immutable.Map<number, number>([[0, 2], [1, 3]]),
+        };
+        let state = default_factory.get().copy(new HS.HandState(default_factory, 3), modifications);
+        let {new_state, fail_reason} = state.make_bid(1, 5);
+        assert.notEqual(fail_reason.length, 0);
+        assert.equal(new_state, null)
+    });
 });

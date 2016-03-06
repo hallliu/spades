@@ -12,14 +12,14 @@ class DefaultFactory implements HandStateFactory {
     recycle(hs: HandState) {}
 }
 
-var factory = new DefaultFactory();
+export var factory = new DefaultFactory();
 
-export function create_new_hand(room_info: RoomInfo, player_to_socket: Immutable.Map<string, string>,
-                                new_game = false): {hand: HandState, msgs: IOMessage[]}  {
+export function create_new_hand(room_info: RoomInfo, new_game = false):
+        {hand: HandState, msgs: IOMessage[]} {
     let hand = factory.get(room_info.next_player);
     let msgs: IOMessage[] = _.map(hand.cards.keySeq().toArray(), (p_num: number) => {
         return {
-            room: player_to_socket.get(room_info.players.get(p_num)),
+            room: room_info.players.get(p_num),
             message: "start_game",
             contents: {
                 cards: hand.cards.get(p_num).toArray(),
@@ -62,6 +62,13 @@ export function handle_player_bid(room_info: RoomInfo, player_id: string,
         });
     }
 
-    // TODO: detect when all players have bid
+    if (new_state && new_hand.bids.size === 4) {
+        msgs.push({
+            room: room_info.players.get(new_hand.next_player),
+            message: "make_play",
+            contents: {},
+        });
+    }
+
     return {hand: new_hand, msgs: msgs};
 }

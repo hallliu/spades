@@ -50,8 +50,7 @@ export function register_handlers(global_state: IGlobalState, player_id: string,
             socket.join(msg.room_id);
         } 
         if (global_state.get_room_info(msg.room_id).players.size === 4) {
-            let {hand, msgs} = create_new_hand(global_state.get_room_info(msg.room_id),
-                                                   global_state.get_socket_id_mapping(), true);
+            let {hand, msgs} = create_new_hand(global_state.get_room_info(msg.room_id), true);
             global_state.set_hand_for_room(msg.room_id, hand);
             exec_results(msgs, io, socket);
         }
@@ -81,6 +80,8 @@ export function register_handlers(global_state: IGlobalState, player_id: string,
 
     // Register the socket id
     global_state.associate_player_with_socket(player_id, socket.id);
+    // Join the room identified with the player id, so we don't have to keep passing around socket ids.
+    socket.join(player_id);
 }
 
 function exec_results(msgs: IOMessage[], io: SocketIO.Server, socket: SocketIO.Socket) {
