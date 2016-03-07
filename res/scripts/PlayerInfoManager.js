@@ -49,6 +49,7 @@ var obtain = function() {
                 el.find(".player-name").html(name_dict.player_names[id]);
             }
         });
+        this.name_dict = name_dict;
     };
 
     PlayerInfoManager.prototype.set_num_tricks = function(id, num_tricks) {

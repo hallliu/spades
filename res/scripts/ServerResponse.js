@@ -46,7 +46,6 @@ var handle_position_full = function(msg) {
 };
 
 var handle_new_player_joined = function(msg) {
-    console.log("new_player_joined: " + msg);
     var new_player_name = msg.current_players[msg.newly_joined_position].name;
 
     chat_area.push_info_message(new_player_name + " has joined the room!");
@@ -56,9 +55,13 @@ var handle_new_player_joined = function(msg) {
     _update_names(player_names, undefined);
 };
 
-var handle_new_game = function(msg) {
-    console.log("new_game:"  + msg);
+var handle_start_game = function(msg) {
     ScoreModel.obtain().clear_scores();
+    handle_start_round(msg);
+};
+
+var handle_start_round = function(msg) {
+    console.log(msg);
     var this_player_cards = _.map(msg.cards, function(card_id) {
         return new CardUI.Card(card_id).flip(true);
     });
@@ -78,13 +81,45 @@ var handle_new_game = function(msg) {
     _.each(other_decks, function(deck, idx) {
         deck.initialize_with_cards(other_player_cards[idx]);
     });
+    ScoreModel.obtain().start_new_round();
+};
+
+var handle_bid_round = function(msg) {
+    console.log(msg);
+    if (msg.bidding_user === Globals.player_position) {
+        chat_area.push_info_message("Please enter your bid, using /bid <x>.");
+    }
+    else {
+        chat_area.push_info_message(PlayerInfoManager.obtain().name_dict.player_names[msg.bidding_user]
+                                    + " is now bidding.");
+    }
+};
+
+var handle_invalid_bid = function(msg) {
+    console.log(msg);
+    chat_area.push_info_message("Your bid was not accepted: " + msg.reason);
+};
+
+var handle_user_bid = function(msg) {
+    if (msg.bidding_user === Globals.player_position) {
+        chat_area.push_info_message("Bid successful.");
+    } else {
+        chat_area.push_info_message(PlayerInfoManager.obtain().name_dict.player_names[msg.bidding_user]
+                                    + " has bid " + msg.bid);
+    }
+    
+    ScoreModel.obtain().add_bid(msg.bidding_user, msg.bid);
 };
 
 var setup_socket = function(socket) {
     socket.on("successful_join", handle_successful_join);
     socket.on("position_full", handle_position_full);
     socket.on("new_player_joined", handle_new_player_joined);
-    socket.on("start_game", handle_new_game);
+    socket.on("start_game", handle_start_game);
+    socket.on("start_round", handle_start_round);
+    socket.on("bid_round", handle_bid_round);
+    socket.on("invalid_bid", handle_invalid_bid);
+    socket.on("user_bid", handle_user_bid);
 };
 
 return {setup_socket: setup_socket};

@@ -12,7 +12,7 @@ define(["./CardUI", "./PlayArea", "velocity", "underscore", "socketio", "Scoring
             if (t.charAt(0) === '/') {
                return;
             } 
-            socket.emit("chat_message", {
+            Globals.socket.emit("chat_message", {
                 author: player_name,
                 message: t,
             });

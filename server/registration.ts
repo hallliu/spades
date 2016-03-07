@@ -124,6 +124,7 @@ export function position_choice_handler(global_state: IGlobalState, room_id: str
 
     room_info = room_info.add_player(position, player_id);
     global_state.update_room(room_info);
+    global_state.put_player_in_room(player_id, room_id);
 
     var message_contents =  {
         current_players: make_room_info(room_info.players.toJS(), (pid: string)=>{

@@ -142,14 +142,22 @@ define(["Constants", "underscore", "Globals", "ChatArea", "socketio", "jquery", 
         });
     };
 
+    var process_bid = function(_bid_amount) {
+        var bid_amount = parseInt(_bid_amount);
+        Globals.socket.emit("make_bid", {
+            bid: bid_amount
+        });
+    };
+
     var process_undefined = function() {
         chat_area.push_info_message("That command is not yet implemented or invalid.");
-    }
+    };
 
     var command_registry = {
         "name": process_name,
         "newroom": process_newroom,
         "joinroom": process_joinroom,
+        "bid": process_bid,
         "d": process_autodebug,
     };
 
