@@ -45,11 +45,15 @@ describe("Game driver functionality testing", function() {
         let room_info = setup_sample_room("test");
         let {hand, msgs} = handle_player_bid(room_info, player_ids[0], hs, 5);
         assert.strictEqual(hand, hs1);
-        assert.equal(msgs.length, 1);
+        assert.equal(msgs.length, 2);
         assert.equal(msgs[0].room, "test");
         assert.equal(msgs[0].message, "user_bid");
         assert.equal(msgs[0].contents["bidding_user"], 0);
         assert.equal(msgs[0].contents["bid"], 5);
+
+        assert.equal(msgs[1].room, "test");
+        assert.equal(msgs[1].message, "bid_round");
+        assert.equal(msgs[1].contents["bidding_user"], 1);
     });
 
     it("Making a successful final bid", function() {

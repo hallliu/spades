@@ -68,7 +68,14 @@ export function handle_player_bid(room_info: RoomInfo, player_id: string,
             message: "make_play",
             contents: {},
         });
+    } else if (new_state) {
+        msgs.push({
+            room: room_info.id,
+            message: "bid_round",
+            contents: {
+                bidding_user: new_hand.next_player,
+            },
+        });
     }
-
     return {hand: new_hand, msgs: msgs};
 }

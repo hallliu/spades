@@ -69,6 +69,7 @@ export function register_handlers(global_state: IGlobalState, player_id: string,
         }
         let room_info = global_state.get_room_info(room_id);
         let {hand, msgs} = handle_player_bid(room_info, player_id, curr_hand, msg.bid);
+        global_state.set_hand_for_room(room_id, hand);
         exec_results(msgs, io, socket);
     });
 
