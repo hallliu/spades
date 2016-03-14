@@ -213,4 +213,10 @@ describe("Game state transitions", function() {
         assert.notEqual(fail_reason.length, 0);
         assert.equal(new_state, null)
     });
+
+    it("Test is_empty functionality", function() {
+        let modifications_empty = make_card_set([], [], [], []);
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 3), modifications_empty);
+        assert(state.is_empty());
+    });
 });

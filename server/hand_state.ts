@@ -117,6 +117,10 @@ export class HandState {
         return this._spades_broken;
     }
 
+    is_empty(): boolean {
+        return this._cards.valueSeq().map((x) => x.size).reduce((r: number, v: number) => r + v) === 0;
+    }
+
     copy(other: HandState, modifications: HandStateMembers): HandState {
         this._cards = modifications.cards || other.cards;
         this._cards_in_play = modifications.cards_in_play || other.cards_in_play;

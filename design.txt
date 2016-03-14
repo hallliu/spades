@@ -140,7 +140,7 @@ Gameplay:
 
 (Server): When all players have played, broadcast "end_of_trick" message:
     {
-        winner: <player uuid>
+        winner: <player position>
     }
           then immediately go back to "make_play" for the next trick
 

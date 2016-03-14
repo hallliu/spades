@@ -3,7 +3,7 @@ import winston = require("winston");
 
 import {position_choice_handler} from "./registration";
 import {IGlobalState} from "./global_state";
-import {create_new_hand, handle_player_bid} from "./game_driver";
+import {create_new_hand, handle_player_bid, handle_play_card} from "./game_driver";
 
 const logger = new (winston.Logger)({
     transports: [
@@ -23,6 +23,10 @@ interface PositionChoiceMessage {
 
 interface MakeBidMessage {
     bid: number
+}
+
+interface PlayCardMessage {
+    card: number
 }
 
 export interface IOMessage {
@@ -70,6 +74,23 @@ export function register_handlers(global_state: IGlobalState, player_id: string,
         let room_info = global_state.get_room_info(room_id);
         let {hand, msgs} = handle_player_bid(room_info, player_id, curr_hand, msg.bid);
         global_state.set_hand_for_room(room_id, hand);
+        exec_results(msgs, io, socket);
+    });
+
+    socket.on("play_card", function(msg: PlayCardMessage) {
+        let room_id = global_state.get_room_of_player(player_id);
+        if (room_id == null) {
+            logger.log("error", `Player ${player_id} is not associated to a room`);
+            return;
+        }
+        let curr_hand = global_state.get_hand_for_room(room_id);
+        if (curr_hand === null) {
+            logger.log("error", `Room ${room_id} has no active hand ongoing`);
+            return;
+        }
+        let room_info = global_state.get_room_info(room_id);
+        let [new_hand, msgs] = handle_play_card(room_info, curr_hand, player_id, msg.card);
+        global_state.set_hand_for_room(room_id, new_hand);
         exec_results(msgs, io, socket);
     });
 
