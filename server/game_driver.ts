@@ -59,7 +59,7 @@ export function handle_play_card(room: RoomInfo, hand: HandState, player_id: str
                 reason: error_message,
             }
         });
-        new_hand = hand;
+        return [hand, msgs];
     } else {
         new_hand = result.new_state;
         msgs.push({
