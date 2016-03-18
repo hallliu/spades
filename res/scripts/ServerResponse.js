@@ -93,6 +93,7 @@ var handle_bid_round = function(msg) {
         chat_area.push_info_message(PlayerInfoManager.obtain().name_dict.player_names[msg.bidding_user]
                                     + " is now bidding.");
     }
+    PlayerInfoManager.obtain().set_active_player(msg.bidding_user);
 };
 
 var handle_invalid_bid = function(msg) {
@@ -111,6 +112,13 @@ var handle_user_bid = function(msg) {
     ScoreModel.obtain().add_bid(msg.bidding_user, msg.bid);
 };
 
+var handle_make_play = function(msg) {
+    if (msg.player === Globals.player_position) {
+        // TODO
+    }
+    PlayerInfoManager.obtain().set_active_player(msg.player);
+};
+
 var setup_socket = function(socket) {
     socket.on("successful_join", handle_successful_join);
     socket.on("position_full", handle_position_full);
@@ -120,6 +128,7 @@ var setup_socket = function(socket) {
     socket.on("bid_round", handle_bid_round);
     socket.on("invalid_bid", handle_invalid_bid);
     socket.on("user_bid", handle_user_bid);
+    socket.on("make_play", handle_make_play);
 };
 
 return {setup_socket: setup_socket};

@@ -115,7 +115,10 @@ Starting a game and bidding:
 -----------------------
 Gameplay:
 
-(Server): After all players have bid, server will send the "make_play" message to the first player.
+(Server): After all players have bid, server will send the "make_play" message to all players:
+    {
+        player: <player position>
+    }
 
 (Client): Sends a "play_card" message to the server:
     {

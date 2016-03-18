@@ -20,6 +20,10 @@ body {
     border: 2px solid #F0EAD6;
 }
 
+.active-player {
+    border: 2px solid #13F335;
+}
+
 .player-info-area {
     display: flex;
     flex-direction: column;

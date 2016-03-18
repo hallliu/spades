@@ -69,8 +69,9 @@ describe("Game driver functionality testing", function() {
         let {hand, msgs} = handle_player_bid(room_info, player_ids[0], hs, 5);
         assert.strictEqual(hand, hs1);
         assert.equal(msgs.length, 2);
-        assert.equal(msgs[1].room, player_ids[1]);
+        assert.equal(msgs[1].room, room_info.id);
         assert.equal(msgs[1].message, "make_play");
+        assert.equal(msgs[1].contents["player"], hand.next_player);
     });
 
     it("Making an unsuccessful bid", function() {
@@ -109,9 +110,9 @@ describe("Game driver functionality testing", function() {
             leading_suit: hs1.leading_suit,
         });
 
-        assert.equal(msgs[1].room, player_ids[1]);
+        assert.equal(msgs[1].room, room_info.id);
         assert.equal(msgs[1].message, "make_play");
-        assert.deepEqual(msgs[1].contents, {});
+        assert.deepEqual(msgs[1].contents, {player: hand.next_player});
     });
 
     it("Player makes a valid play that ends the trick", function() {
@@ -139,9 +140,9 @@ describe("Game driver functionality testing", function() {
         assert.equal(msgs[1].message, "end_of_trick");
         assert.equal(msgs[1].contents["winner"], hs1.next_player);
 
-        assert.equal(msgs[2].room, player_ids[hs1.next_player]);
+        assert.equal(msgs[2].room, room_info.id);
         assert.equal(msgs[2].message, "make_play");
-        assert.deepEqual(msgs[2].contents, {});
+        assert.deepEqual(msgs[2].contents, {player: hand.next_player});
     });
 
     it("Player makes an invalid play", function() {

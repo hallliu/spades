@@ -190,7 +190,7 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
             var player_info_el = this.container_el.find(".player-info-area");
             player_info_el.width(Constants.PLAYER_INFO_WIDTH);
             player_info_el.height(Constants.CARD_HEIGHT);
-            PlayerInfoManager.obtain().register_info_area(position, player_info_el);
+            PlayerInfoManager.obtain().register_info_area(position, player_info_el, this.el);
         };
 
         Deck.prototype.attach = function() {

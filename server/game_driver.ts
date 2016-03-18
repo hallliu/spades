@@ -87,9 +87,11 @@ export function handle_play_card(room: RoomInfo, hand: HandState, player_id: str
     }
     
     msgs.push({
-        room: room.players.get(new_hand.next_player),
+        room: room.id,
         message: "make_play",
-        contents: {},
+        contents: {
+            player: new_hand.next_player,
+        },
     });
 
     return [new_hand, msgs];
@@ -125,9 +127,11 @@ export function handle_player_bid(room_info: RoomInfo, player_id: string,
 
     if (new_state && new_hand.bids.size === 4) {
         msgs.push({
-            room: room_info.players.get(new_hand.next_player),
+            room: room_info.id,
             message: "make_play",
-            contents: {},
+            contents: {
+                player: new_hand.next_player,
+            },
         });
     } else if (new_state) {
         msgs.push({

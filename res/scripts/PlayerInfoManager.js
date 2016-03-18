@@ -12,11 +12,14 @@ var obtain = function() {
 
     var PlayerInfoManager = function() {
         this.position_to_info_el = {};
+        this.position_to_deck_el = {};
         this.player_to_info_el = {};
+        this.player_to_deck_el = {};
     };
 
-    PlayerInfoManager.prototype.register_info_area = function(position, el) {
-        this.position_to_info_el[position] = el;
+    PlayerInfoManager.prototype.register_info_area = function(position, info_el, deck_el) {
+        this.position_to_info_el[position] = info_el;
+        this.position_to_deck_el[position] = deck_el;
     };
 
     /**
@@ -26,6 +29,10 @@ var obtain = function() {
         _.each(this.position_to_info_el, function(el, pos) {
             var np_id = (Constants.POSITION_TO_ID[pos] + player_position) % 4;
             this.player_to_info_el[np_id] = el;
+        }, this);
+        _.each(this.position_to_deck_el, function(el, pos) {
+            var np_id = (Constants.POSITION_TO_ID[pos] + player_position) % 4;
+            this.player_to_deck_el[np_id] = el;
         }, this);
     };
 
@@ -58,6 +65,15 @@ var obtain = function() {
         _.times(num_tricks, function() {
             trick_area.append(make_trick_div());
         });
+    };
+
+    PlayerInfoManager.prototype.set_active_player = function(id) {
+        _.each([0, 1, 2, 3], function(pos) {
+            this.player_to_deck_el[pos].removeClass("active-player");
+            this.player_to_info_el[pos].parent().removeClass("active-player");
+        }, this);
+        this.player_to_deck_el[id].addClass("active-player");
+        this.player_to_info_el[id].parent().addClass("active-player");
     };
 
     var obtain = function() {
