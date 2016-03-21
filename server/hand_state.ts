@@ -45,6 +45,10 @@ function does_hand_have_suit(hand: Immutable.Set<number>, suit: number): boolean
    }
 }
 
+function does_hand_have_non_spades(hand: Immutable.Set<number>): boolean {
+    return (hand.find(card => get_suit_of_card(card) !== SPADES_SUIT) != null);
+}
+
 function get_winning_player(cards: Immutable.Map<number, number>, leading_suit: number): number {
     var spades_cards = cards.filter(c => get_suit_of_card(c) == SPADES_SUIT);
     if (spades_cards.size > 0) {
@@ -156,7 +160,8 @@ export class HandState {
         }
         if (get_suit_of_card(card) == SPADES_SUIT
                 && this._leading_suit == null
-                && !this._spades_broken) {
+                && !this._spades_broken
+                && does_hand_have_non_spades(players_hand)) {
             return {new_state: null, notes: HandStateNote.ERR_SPADES_UNBROKEN};
         }
 

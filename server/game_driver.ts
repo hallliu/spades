@@ -66,6 +66,7 @@ export function handle_play_card(room: RoomInfo, hand: HandState, player_id: str
             room: room.id,
             message: "play_made",
             contents: {
+                player: player_position,
                 card: card,
                 leading_suit: new_hand.leading_suit,
             },

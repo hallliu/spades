@@ -62,6 +62,7 @@ var handle_start_game = function(msg) {
 
 var handle_start_round = function(msg) {
     console.log(msg);
+    Globals.spades_broken = false;
     var this_player_cards = _.map(msg.cards, function(card_id) {
         return new CardUI.Card(card_id).flip(true);
     });
@@ -114,10 +115,25 @@ var handle_user_bid = function(msg) {
 
 var handle_make_play = function(msg) {
     if (msg.player === Globals.player_position) {
-        // TODO
+        var player_deck = _.find(window.decks, function(d) {return d.board_position === "bottom";});
+        player_deck.arm_cards(function(card_id) {
+            Globals.socket.emit("play_card", {
+                card: card_id
+            });
+        });
     }
     PlayerInfoManager.obtain().set_active_player(msg.player);
 };
+
+var handle_play_made = function(msg) {
+    if (msg.player === Globals.player_position) {
+        // The animation was performed when the player played the card
+        return;
+    }
+
+    var deck = PlayerInfoManager.obtain().player_to_deck[msg.player];
+    deck.launch_fake_card_as(msg.card);
+}
 
 var setup_socket = function(socket) {
     socket.on("successful_join", handle_successful_join);

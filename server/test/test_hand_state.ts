@@ -136,6 +136,15 @@ describe("Game state transitions", function() {
         assert.equal(notes, null);
     });
 
+    it("Break spades when leading", function() {
+        var modifications = make_card_set([3, 6], [34, 8], [44, 11], [17, 23]);
+        var state = default_factory.get().copy(new HS.HandState(default_factory, 0), modifications);
+        var {new_state, notes} = state.play_card(0, 3);
+        assert_card_played_by_player(new_state, 0, 3);
+        assert(new_state.spades_broken && !state.spades_broken);
+        assert.equal(notes, null);
+    });
+
     it("Finish round -- all in-suit", function() {
         var modifications = make_card_set([46], [34], [44], [17, 23]);
         modifications.leading_suit = 1;

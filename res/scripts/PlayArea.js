@@ -39,13 +39,14 @@ define(["underscore", "./Constants"], function(_, Constants) {
         var PlayArea = function() {
             this.el = $("#play-area");
             this.cards = {};
+            this.suit = null;
         };
 
         PlayArea.prototype.set_suit = function(suit) {
-            if (parseInt(suit) === suit) {
-                suit = Constants.SUIT_NAMES[suit];
-            }
-            switch (suit) {
+            this.suit = suit;
+            var suit_str = Constants.SUIT_NAMES[suit];
+
+            switch (suit_str) {
                 case "spades":
                     $("#active-suit").css("color", "black");
                     $("#active-suit").html("&spades;");
@@ -81,6 +82,9 @@ define(["underscore", "./Constants"], function(_, Constants) {
             card.el.offset(old_offset);
             */
             this.cards[container_position] = card;
+            if (this.suit === null) {
+                this.set_suit(Math.floor(card.cid / 13));
+            }
         };
 
         /**
@@ -88,6 +92,8 @@ define(["underscore", "./Constants"], function(_, Constants) {
          * @param direction: one of 'top', 'bottom', 'left', or 'right'
          */
         PlayArea.prototype.clear = function(direction) {
+            this.suit = null;
+            $("#active-suit").empty();
             var dest_position = calculate_new_loc(direction);
             ['bottom', 'top', 'left', 'right'].forEach(function(card_loc) {
                 if (this.cards[card_loc] === undefined) {

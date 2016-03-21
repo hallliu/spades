@@ -106,6 +106,7 @@ describe("Game driver functionality testing", function() {
         assert.equal(msgs[0].room, "test");
         assert.equal(msgs[0].message, "play_made");
         assert.deepEqual(msgs[0].contents, {
+            player: 0,
             card: card_played,
             leading_suit: hs1.leading_suit,
         });
@@ -132,6 +133,7 @@ describe("Game driver functionality testing", function() {
         assert.equal(msgs[0].room, "test");
         assert.equal(msgs[0].message, "play_made");
         assert.deepEqual(msgs[0].contents, {
+            player: 0,
             card: card_played,
             leading_suit: hs1.leading_suit,
         });

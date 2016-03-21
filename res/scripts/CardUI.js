@@ -15,13 +15,24 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
                 this.suit = id_or_suit;
                 this.number = number;
             }
+            this._initialize_images();
+            this.flipped = false;
+            this.el.data("obj", this);
+        };
+
+        Card.prototype.set_value = function(card_id) {
+            this.cid = card_id;
+            this.suit = Constants.SUIT_NAMES[Math.floor(this.cid / 13)];
+            this.number = Constants.CARD_NAMES[this.cid % 13];
+            this._initialize_images();
+        };
+
+        Card.prototype._initialize_images = function() {
             this.el = $(_.template($("#card_template").html())({
                 "suit": this.suit,
                 "card": this.number,
                 "back": BACK_ID,
             }));
-            this.flipped = false;
-            this.el.data("obj", this);
         };
 
         Card.prototype.flip = function(immediate) {
@@ -51,9 +62,6 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
                     this.el.velocity({"top": this.el.data("orig-top")},
                             {duration: Constants.CARD_PEEK_SPEED});
                 }, this));
-                this.el.click(_.bind(function() {
-                    this.put_in_play();
-                }, this));
             }
         };
 
@@ -76,7 +84,10 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
             this.el.offset(old_offset);
         };
 
-        Card.prototype.put_in_play = function() {
+        Card.prototype.put_in_play = function(force) {
+            if (!force && !this._is_legal_to_play()) {
+                return false;
+            }
             this.deck.remove_card(this.cid);
             this.on_removed();
             var new_position = PlayArea.obtain().get_position_of_container(this.deck.board_position);
@@ -91,6 +102,7 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
             p1.then(_.bind(function() {
                 PlayArea.obtain().add_to_container(this, this.deck.board_position);
             }, this));
+            return true;
         };
 
         Card.prototype.remove_from_play = function(dest_position) {
@@ -101,6 +113,24 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
             }, { display: "none" }).then(_.bind(function() {
                 this.el.detach();
             }, this));
+        };
+
+        Card.prototype._is_legal_to_play = function() {
+            if (PlayArea.obtain().cards[this.deck.board_position]) {
+                return false;
+            }
+            var leading_suit = PlayArea.obtain().suit;
+            if (leading_suit !== null
+                    && (Math.floor(this.cid / 13) !== leading_suit)
+                    && (this.deck.contains_suit(leading_suit))) {
+                return false;
+            }
+
+            if (!Globals.spades_broken && Math.floor(this.cid / 13) === 0
+                    && leading_suit !== null && this.deck.only_contains_suit(0)) {
+                return false;
+            }
+            return true;
         };
 
         return Card;
@@ -190,7 +220,7 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
             var player_info_el = this.container_el.find(".player-info-area");
             player_info_el.width(Constants.PLAYER_INFO_WIDTH);
             player_info_el.height(Constants.CARD_HEIGHT);
-            PlayerInfoManager.obtain().register_info_area(position, player_info_el, this.el);
+            PlayerInfoManager.obtain().register_info_area(position, player_info_el, this);
         };
 
         Deck.prototype.attach = function() {
@@ -278,6 +308,51 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
                 card.el.css("left", card_position.left);
                 card.el.css("top", card_position.top);
             }
+        };
+
+        Deck.prototype.arm_cards = function(card_id_callback) {
+            _.each(this.cards, function(card) {
+                card.el.click(_.bind(function() {
+                    var success = card.put_in_play();
+                    if (success) {
+                        card_id_callback(card.cid);
+                        this.deactivate_cards();
+                    }
+                }, this));
+            }, this);
+        };
+
+        Deck.prototype.unarm_cards = function() {
+            _.each(this.cards, function(card) {
+                card.el.off("click");
+            });
+        };
+
+        Deck.prototype.contains_suit = function(suit) {
+            return _.some(this.cards, function(card) {
+                return Math.floor(card.cid / 13) === suit;
+            });
+        };
+
+        Deck.prototype.only_contains_suit = function(suit) {
+            return _.every(this.cards, function(card) {
+                return Math.floor(card.cid / 13) === suit;
+            });
+        };
+
+        Deck.prototype.mark_active = function(active) {
+            if (active) {
+                this.el.addClass("active-player");
+            } else {
+                this.el.removeClass("active-player");
+            }
+        };
+
+        Deck.prototype.launch_fake_card_as = function(card_id) {
+            var num_cards = this.cards.length;
+            var middle_card = this.cards[num_cards / 2];
+            middle_card.set_value(card_id);
+            middle_card.put_in_play(true);
         };
 
         return Deck;
