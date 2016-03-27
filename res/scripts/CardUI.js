@@ -316,7 +316,7 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
                     var success = card.put_in_play();
                     if (success) {
                         card_id_callback(card.cid);
-                        this.deactivate_cards();
+                        this.unarm_cards();
                     }
                 }, this));
             }, this);
@@ -350,7 +350,7 @@ define(["velocity", "underscore", "./Constants", "./PlayArea", "PlayerInfoManage
 
         Deck.prototype.launch_fake_card_as = function(card_id) {
             var num_cards = this.cards.length;
-            var middle_card = this.cards[num_cards / 2];
+            var middle_card = this.cards[Math.floor(num_cards / 2)];
             middle_card.set_value(card_id);
             middle_card.put_in_play(true);
         };

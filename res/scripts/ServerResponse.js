@@ -1,7 +1,7 @@
 "use strict";
 
-define(["Constants", "underscore", "Globals", "ChatArea", "SeatPicker", "ScoringArea", "PlayerInfoManager", "ScoreModel", "CardUI"],
-       function(Constants, _, Globals, ChatArea, SeatPicker, ScoringArea, PlayerInfoManager, ScoreModel, CardUI) {
+define(["Constants", "underscore", "Globals", "ChatArea", "SeatPicker", "ScoringArea", "PlayerInfoManager", "ScoreModel", "CardUI", "Command"],
+       function(Constants, _, Globals, ChatArea, SeatPicker, ScoringArea, PlayerInfoManager, ScoreModel, CardUI, Command) {
 
 var chat_area = ChatArea.obtain();
 
@@ -87,8 +87,14 @@ var handle_start_round = function(msg) {
 
 var handle_bid_round = function(msg) {
     console.log(msg);
+
     if (msg.bidding_user === Globals.player_position) {
         chat_area.push_info_message("Please enter your bid, using /bid <x>.");
+        if (Globals.autodebug) {
+            Globals.socket.emit("make_bid", {
+                bid: 4
+            });
+        }
     }
     else {
         chat_area.push_info_message(PlayerInfoManager.obtain().name_dict.player_names[msg.bidding_user]
@@ -145,6 +151,7 @@ var setup_socket = function(socket) {
     socket.on("invalid_bid", handle_invalid_bid);
     socket.on("user_bid", handle_user_bid);
     socket.on("make_play", handle_make_play);
+    socket.on("play_made", handle_play_made);
 };
 
 return {setup_socket: setup_socket};
